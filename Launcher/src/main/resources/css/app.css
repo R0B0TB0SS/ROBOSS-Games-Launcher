@@ -1,0 +1,40 @@
+.app-layout {
+    -fx-background: rgb(10, 12, 12);
+}
+
+.sidemenu {
+    -fx-background-color: rgb(70,70,70);
+}
+
+.test-title{
+-fx-text-fill:black;
+}
+
+.home-title {
+    -fx-text-fill: rgb(20, 25, 25);
+}
+
+.sidemenu-nav-btn {
+    -fx-background-color:rgb(40,40,40);
+    -fx-text-alignment: center;
+    -fx-min-height: 80px;
+    -fx-max-height: 80px;
+    -fx-max-width: 80px;
+    -fx-background-radius: 20px;
+}
+
+.sidemenu-nav-btn:hover {
+    -fx-background-color: rgb(40, 40, 40, 0.6);
+}
+
+.sidemenu-nav-btn.active {
+    -fx-background-color: #ad0000;
+}
+.sidemenu-nav-btn.active:hover {
+    -fx-background-color: #860000;
+}
+
+.nav-content {
+    -fx-background-color: rgba(50, 50, 50, 0.4);
+}
+

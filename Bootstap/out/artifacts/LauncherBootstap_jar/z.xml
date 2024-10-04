@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch4jConfig>
+  <dontWrapJar>false</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>C:\Users\robot\Documents\LauncherBootstap\out\artifacts\LauncherBootstap_jar\ROBOSS Games Launcher.jar</jar>
+  <outfile>C:\Users\robot\Documents\LauncherBootstap\out\artifacts\LauncherBootstap_jar\ROBOSS Games Launcher.exe</outfile>
+  <errTitle>Error java not found</errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl>http://java.com/download</downloadUrl>
+  <supportUrl></supportUrl>
+  <stayAlive>false</stayAlive>
+  <restartOnCrash>false</restartOnCrash>
+  <manifest></manifest>
+  <icon>C:\Users\robot\Downloads\robossgames.ico</icon>
+  <jre>
+    <path></path>
+    <bundledJre64Bit>false</bundledJre64Bit>
+    <bundledJreAsFallback>false</bundledJreAsFallback>
+    <minVersion>18</minVersion>
+    <maxVersion></maxVersion>
+    <jdkPreference>preferJre</jdkPreference>
+    <runtimeBits>64/32</runtimeBits>
+  </jre>
+  <versionInfo>
+    <fileVersion>1.0.0.0</fileVersion>
+    <txtFileVersion>V 1.0.0</txtFileVersion>
+    <fileDescription>ROBOSS Games Launcher</fileDescription>
+    <copyright>ROBOSS Games</copyright>
+    <productVersion>1.0.0.0</productVersion>
+    <txtProductVersion>V 1.0.0</txtProductVersion>
+    <productName>ROBOSS Games Launcher</productName>
+    <companyName></companyName>
+    <internalName>ROBOSS Games Launcher</internalName>
+    <originalFilename>ROBOSS Games Launcher.exe</originalFilename>
+    <trademarks></trademarks>
+    <language>FRENCH</language>
+  </versionInfo>
+</launch4jConfig>

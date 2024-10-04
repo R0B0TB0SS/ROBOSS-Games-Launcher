@@ -1,0 +1,46 @@
+plugins {
+    id 'java-library'
+    id 'org.openjfx.javafxplugin' version '0.0.9'
+    id 'application'
+    id 'idea'
+}
+
+apply plugin: 'org.openjfx.javafxplugin'
+
+group 'be.R0B0TB0SS.launcher'
+version '1.0.10'
+
+repositories {
+    mavenCentral()
+    maven {
+        url = 'https://litarvan.github.io/maven'
+        name = 'LitarvanMaven'
+    }
+    maven {
+        url = 'https://jitpack.io'
+        name = 'JitPack'
+    }
+}
+
+dependencies {
+    implementation 'fr.flowarg:materialdesignfontfx:7.+'
+    implementation 'fr.flowarg:flowupdater:1.9.+'
+    implementation 'fr.flowarg:openlauncherlib:3.2.+'
+
+    implementation 'com.github.goxr3plus:FX-BorderlessScene:4+'
+    implementation 'com.github.oshi:oshi-core:5+'
+
+    implementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.6.1'
+}
+
+javafx {
+    modules = ['javafx.controls', 'javafx.fxml', 'javafx.web', 'javafx.swing']
+}
+
+application {
+    getMainClass().set('be.R0B0TB0SS.launcher.Main')
+}
+
+compileJava {
+    options.encoding = "UTF-8"
+}

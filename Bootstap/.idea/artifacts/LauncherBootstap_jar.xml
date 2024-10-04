@@ -1,0 +1,15 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="LauncherBootstap:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/LauncherBootstap_jar</output-path>
+    <root id="archive" name="ROBOSS Games Launcher.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.7/751f548c85fa49f330cecbb1875893f971b33c4e/gson-2.7.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/commons-codec/commons-codec/1.17.0/dbe8eef6e14460e73da07f7b11bf994d6626355/commons-codec-1.17.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/commons-io/commons-io/2.16.1/377d592e740dc77124e0901291dbfaa6810a200e/commons-io-2.16.1.jar" path-in-jar="/" />
+      <element id="module-output" name="LauncherBootstap.main" />
+      <element id="dir-copy" path="$PROJECT_DIR$/src/main/resources" />
+    </root>
+  </artifact>
+</component>

@@ -1,0 +1,41 @@
+.play-btn {
+    -fx-background-radius: 10px;
+    -fx-font-size: 16px;
+    -fx-text-fill: #F5F5F5;
+    -fx-background-color: #b60000;
+}
+.box-pane {
+    -fx-background-color: rgb(50, 50, 50);
+}
+
+
+.side-menu{
+    -fx-background-color: rgb(100,20,20);
+}
+
+.bg-image {
+    -fx-background-image: url("/images/modded.jpg");
+    -fx-background-position: center center;
+    -fx-background-repeat: stretch;
+}
+
+
+.side-menu-nav-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill:white;
+    -fx-font-size: 17px;
+    -fx-text-alignment: center;
+    -fx-border-color: transparent;
+}
+
+.side-menu-nav-btn.button {
+    -fx-alignment: center-left;
+}
+
+.side-menu-nav-btn:hover {
+    -fx-background-color: rgb(100, 100, 100, 0.3);
+}
+
+.side-menu-nav-btn.active {
+    -fx-border-color: #85AE51;
+}

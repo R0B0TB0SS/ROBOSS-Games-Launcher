@@ -1,0 +1,23 @@
+.play-btn {
+    -fx-background-radius: 10px;
+    -fx-font-size: 16px;
+    -fx-text-fill: #F5F5F5;
+    -fx-background-color: #b60000;
+}
+.box-pane {
+    -fx-background-color: rgb(50, 50, 50);
+}
+
+.side-menu{
+    -fx-background-color: rgb(250, 50, 50);
+}
+
+.side-menu1{
+    -fx-background-color: rgb(150, 50, 50);
+}
+
+.bg-image {
+    -fx-background-image: url("/images/modded.png");
+    -fx-background-position: center center;
+    -fx-background-repeat: stretch;
+}
