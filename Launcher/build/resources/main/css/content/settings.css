@@ -101,36 +101,20 @@
 }
 
 
-
-.alpha-chk {
+.login-mode-chk {
     -fx-text-fill: white;
 }
 
-.alpha-chk .box {
+.login-mode-chk .box {
     -fx-border-width: 0;
     -fx-border-radius: 10px;
     -fx-background-color: rgb(220, 225, 225);
 }
 
-.alpha-chk:selected .box {
+.login-mode-chk:selected .box {
     -fx-background-color: #b60000;
 }
 
-.alpha-chk {
-    -fx-text-fill: white;
-}
-
-.alpha-chk .box {
-    -fx-border-width: 0;
-    -fx-border-radius: 10px;
-    -fx-background-color: rgb(220, 225, 225);
-}
-
-.alpha-chk:selected .box {
-    -fx-background-color: #b60000;
-}
-
-.alpha-chk:selected .box .mark {
-     -fx-background-color: white;
-
+.login-mode-chk:selected .box .mark {
+    visibility: hidden;
 }

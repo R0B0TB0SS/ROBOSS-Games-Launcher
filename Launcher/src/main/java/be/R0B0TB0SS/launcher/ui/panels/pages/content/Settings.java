@@ -12,6 +12,7 @@ import fr.theshark34.openlauncherlib.util.Saver;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -201,7 +202,22 @@ public class Settings extends ContentPanel {
 
         }
         contentPane.getChildren().add(langcombobox);
-
+        //alpha
+        CheckBox alphaCheck = new CheckBox(Translate.getTranslate("setting.alpha.checkbox"));
+        setCanTakeAllSize(alphaCheck);
+        setCenterV(alphaCheck);
+        alphaCheck.getStyleClass().add("login-mode-chk");
+        alphaCheck.setMaxWidth(325d);
+        alphaCheck.setTranslateY(90d);
+        alphaCheck.setSelected(Objects.equals(saver.get("alphaCheck"), "true"));
+        alphaCheck.selectedProperty().addListener((e, old, newValue) -> {
+            if(Objects.equals(saver.get("alphaCheck"), "false")) {
+                saver.set("alphaCheck", "true");
+            }else{
+                saver.set("alphaCheck", "false");
+            }
+        });
+        contentPane.getChildren().add(alphaCheck);
 
         //version
         Label version = new Label(Translate.getTranslate("setting.version")+ Launcher.VERSION);

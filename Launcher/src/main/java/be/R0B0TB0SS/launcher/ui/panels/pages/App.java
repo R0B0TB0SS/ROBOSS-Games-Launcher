@@ -234,7 +234,7 @@ public class App extends Panel {
         accBtn.setTranslateY(40d);
         accBtn.setOnMouseClicked(e -> setPage(new Account(), accBtn));
 
-        sidemenu.getChildren().addAll( settingsBtn,accBtn,homeBtn,CurseBtn,VanillaBtn);
+        if(Objects.equals(saver.get("alphaCheck"), "true")){sidemenu.getChildren().addAll( settingsBtn,accBtn,homeBtn,CurseBtn,VanillaBtn);}else{sidemenu.getChildren().addAll( settingsBtn,accBtn,homeBtn,VanillaBtn);}
 
 
     }

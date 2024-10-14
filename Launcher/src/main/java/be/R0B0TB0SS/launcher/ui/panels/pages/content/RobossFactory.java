@@ -44,6 +44,9 @@ public class RobossFactory extends ContentPanel {
     public static final String ROBOSS_FACTORY_DATA_URL = "https://robossfactory.alwaysdata.net/launcher_files/roboss_factory.json";
     public static String GAME_VERSION = null;
     public static String FORGE_VERSION = null;
+    public static String PROJECT_ID = null;
+    public static String FILE_ID = null;
+    public static String EXT_REQ = String.valueOf(true);
     private static final Path instancedir = Path.of(Launcher.getInstance().getLauncherDir() + "/versions/robossfactory1");
 
     GridPane boxPane = new GridPane();
@@ -93,12 +96,19 @@ public class RobossFactory extends ContentPanel {
             JsonObject version = (JsonObject) object.get("version");
             saver.set("rf1-mc-version", String.valueOf(version.get("minecraft")).split("\"")[1]);
             saver.set("rf1-forge-version", String.valueOf(version.get("forge")).split("\"")[1]);
+            saver.set("project_id",String.valueOf(version.get("project_id")).split("\"")[1]);
+            saver.set("file_id",String.valueOf(version.get("file_id")).split("\"")[1]);
+            saver.set("ext_req",String.valueOf(version.get("ext_req")).split("\"")[1]);
+
         }catch (Exception ee){
             logger.err("No internet");
         }
 
         GAME_VERSION = saver.get("rf1-mc-version");
         FORGE_VERSION = saver.get("rf1-forge-version");
+        PROJECT_ID = saver.get("project_id");
+        FILE_ID= saver.get("file_id");
+        EXT_REQ = saver.get("ext_req");
         this.showPlayButton();
     }
     private void NameLabem(){
@@ -177,7 +187,7 @@ public class RobossFactory extends ContentPanel {
                         .withName(GAME_VERSION)
                         .build();
 
-            CurseModPackInfo cursemodpack = new CurseModPackInfo(775507,5604438,true);
+            CurseModPackInfo cursemodpack = new CurseModPackInfo(Integer.parseInt(PROJECT_ID), Integer.parseInt(FILE_ID), Boolean.parseBoolean(EXT_REQ));
 
                 ForgeVersion forge = new ForgeVersionBuilder()
                         .withForgeVersion(FORGE_VERSION)

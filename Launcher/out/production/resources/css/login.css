@@ -7,7 +7,7 @@
 }
 
 .bg-image {
-    -fx-background-image: url("/images/bg.png");
+    -fx-background-image: url("/images/rf1.jpg");
     -fx-background-position: center center;
     -fx-background-repeat: stretch;
 }
@@ -26,7 +26,7 @@
 
 .login-card .login-error {
     -fx-text-fill: rgb(255, 107, 107);
-    -fx-font-size: 14px;
+    -fx-font-size: 13px;
     -fx-font-style: italic;
 }
 
