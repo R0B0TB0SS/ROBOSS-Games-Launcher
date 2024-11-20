@@ -36,7 +36,6 @@ public class Launcher
     private final Saver saver;
     private AuthInfos authInfos = null;
 
-
     public static void downloadFile(String imageUrl, String destinationFile){
         URL url;
         try {
@@ -56,11 +55,8 @@ public class Launcher
         } catch (IOException e) {
             Launcher.getInstance().getLogger().err(e.toString());
         }
-
     }
-
     public Launcher() {
-
         instance = this;
         this.logger = new Logger("[ROBOSS Games Launcher]", launcherDir.resolve("launcher.log"));
         if (Files.notExists(launcherDir)) {
