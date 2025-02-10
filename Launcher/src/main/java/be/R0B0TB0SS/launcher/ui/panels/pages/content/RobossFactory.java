@@ -37,6 +37,7 @@ import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.util.Objects;
 
+import static be.R0B0TB0SS.launcher.Launcher.IsOnline;
 
 
 public class RobossFactory extends ContentPanel {
@@ -92,6 +93,7 @@ public class RobossFactory extends ContentPanel {
         this.setCanTakeAllSize(this.fileLabel);
         NameLabem();
         try {
+            IsOnline();
             JsonObject object = IOUtils.readJson(new URL(ROBOSS_FACTORY_DATA_URL)).getAsJsonObject();
             JsonObject version = (JsonObject) object.get("version");
             saver.set("rf1-mc-version", String.valueOf(version.get("minecraft")).split("\"")[1]);
@@ -137,7 +139,7 @@ public class RobossFactory extends ContentPanel {
 
     private void play() {
         try {
-            Launcher.IsOnline();
+            IsOnline();
             this.isDownloading = true;
             this.boxPane.getChildren().clear();
             this.setProgress(0.0, 0.0);

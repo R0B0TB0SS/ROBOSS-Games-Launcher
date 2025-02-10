@@ -6,29 +6,99 @@ import com.google.gson.JsonObject;
 import fr.flowarg.flowupdater.utils.IOUtils;
 import fr.theshark34.openlauncherlib.util.Saver;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.Objects;
 
 public class Translate {
     private static final Saver saver = Launcher.getInstance().getSaver();
-    public static String getTranslate(String id) {
-        String finalTranslate ="";
+
+    public static String getLanguage(){
+        String file = saver.get("language");
+        final String date = String.format("[%s] ", new SimpleDateFormat("hh:mm:ss").format(new Date()));
+        String language = date+"[ROBOSS Games launcher] [WARN]: Missing lang: \""+file+"\"";
         try {
             InputStream inputStream = Translate.class.getClassLoader().getResourceAsStream("lang/lang.json");
             JsonObject mainJsonObject = IOUtils.readJson(inputStream).getAsJsonObject();
-            JsonArray langArray = (JsonArray) mainJsonObject.get("translation");
-
+            JsonArray langArray = (JsonArray) mainJsonObject.get("lang");
             for (Object o : langArray) {
-                JsonObject versionNumber = (JsonObject) o;
-                String lang = String.valueOf(versionNumber.get("language")).split("\"")[1];
-                if (Objects.equals(lang, saver.get("language"))) {
-                   finalTranslate = String.valueOf(versionNumber.get(id)).split("\"")[1];
+                JsonObject langlist = (JsonObject) o;
+                String arlang = String.valueOf(langlist.get("file")).split("\"")[1];
+                if (Objects.equals(arlang,file)) {
+                    language = String.valueOf(langlist.get("language")).split("\"")[1];
                 }
-
             }
+        } catch (Exception ignored) {
+        }
+        return language;
+    }
+    public static Boolean isLanguageExist(String language){
+        boolean res = Boolean.FALSE;
+        InputStream inputStream = Translate.class.getClassLoader().getResourceAsStream("lang/lang.json");
+        JsonObject mainJsonObject = IOUtils.readJson(inputStream).getAsJsonObject();
+        JsonArray langArray = (JsonArray) mainJsonObject.get("lang");
+        for (Object o : langArray) {
+            JsonObject langlist = (JsonObject) o;
+            String arlang = String.valueOf(langlist.get("file")).split("\"")[1];
+            String arfile = String.valueOf(langlist.get("language")).split("\"")[1];
+            if (Objects.equals(arlang, language) | Objects.equals(arfile,language)) {
+                res = Boolean.TRUE;
+            }
+        }
+        return res;
+    }
+    public static String getTranslate(String id) {
+        String file = saver.get("language");
+
+        String finalTranslate ="";
+        if(!isLanguageExist(file)){
+            final String date = String.format("[%s] ", new SimpleDateFormat("hh:mm:ss").format(new Date()));
+            System.out.println(date+"[ROBOSS Games launcher] [WARN]: Missing Key: \""+id+"\" in lang file.");
+            finalTranslate = id;
+            return finalTranslate;
+        }
+        try {
+            InputStream inputStream = Translate.class.getClassLoader().getResourceAsStream("lang/"+file+".json");
+            JsonObject mainJsonObject = IOUtils.readJson(inputStream).getAsJsonObject();
+            finalTranslate = String.valueOf(mainJsonObject.get(id)).split("\"")[1];
         } catch (Exception e) {
-            System.out.println(e);
+            final String date = String.format("[%s] ", new SimpleDateFormat("hh:mm:ss").format(new Date()));
+            System.out.println(date+"[ROBOSS Games launcher] [WARN]: Missing Key: \""+id+"\" in lang file.");
             finalTranslate = id;
         }
         return finalTranslate;
+    }
+    public static ArrayList<Object> languageList(){
+        ArrayList<Object> res =new ArrayList<>();
+        InputStream inputStream = Translate.class.getClassLoader().getResourceAsStream("lang/lang.json");
+        JsonObject mainJsonObject = IOUtils.readJson(inputStream).getAsJsonObject();
+        JsonArray langArray = (JsonArray) mainJsonObject.get("lang");
+        for (Object o : langArray) {
+            JsonObject langlist = (JsonObject) o;
+            String arlang = String.valueOf(langlist.get("language")).split("\"")[1];
+            res.add(arlang);
+        }
+        return res;
+    }
+    public static String getFileName(String language){
+        String res = "en_us";
+        if(!isLanguageExist(language)){
+            res = "en_us";
+        }else{
+            InputStream inputStream = Translate.class.getClassLoader().getResourceAsStream("lang/lang.json");
+            JsonObject mainJsonObject = IOUtils.readJson(inputStream).getAsJsonObject();
+            JsonArray langArray = (JsonArray) mainJsonObject.get("lang");
+            for (Object o : langArray) {
+                JsonObject langlist = (JsonObject) o;
+                String arlang = String.valueOf(langlist.get("language")).split("\"")[1];
+                if (Objects.equals(arlang, language)) {
+                    res = String.valueOf(langlist.get("file")).split("\"")[1];
+                }
+            }
+        }
+        return res;
+
     }
 }

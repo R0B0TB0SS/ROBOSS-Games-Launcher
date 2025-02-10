@@ -1,0 +1,18 @@
+.create-profile-layout {
+    -fx-background-color: rgb(50, 50, 50);
+}
+
+.play-btn {
+    -fx-background-radius: 10px;
+    -fx-font-size: 16px;
+    -fx-text-fill: #F5F5F5;
+    -fx-background-color: #b60000;
+}
+
+.play-icon {
+    -fx-fill: white;
+}
+
+.play-btn:hover {
+    -fx-background-color: #820000;
+}

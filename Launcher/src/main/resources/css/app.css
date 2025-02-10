@@ -37,4 +37,7 @@
 .nav-content {
     -fx-background-color: rgba(50, 50, 50, 0.4);
 }
+.box-notif-error{
+    -fx-background-color: #860000
+}
 

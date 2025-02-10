@@ -159,7 +159,7 @@ public class Account extends  ContentPanel{
             userPane.getChildren().add(usernameLabel);
 
 
-            Label uidLabel = new Label(Translate.getTranslate("account.user_type"));
+            Label uidLabel = new Label(Translate.getTranslate("account.user.type"));
             uidLabel.setFont(Font.font("Consolas", FontWeight.BOLD, FontPosture.REGULAR, 40f));
             setCanTakeAllSize(uidLabel);
             setTop(uidLabel);
@@ -186,7 +186,7 @@ public class Account extends  ContentPanel{
                     UUIDLabel.setTranslateY(200d);
                     userPane.getChildren().add(UUIDLabel);
                 }catch (Exception e){
-                    String type = Translate.getTranslate("account.user_type.no_connection");
+                    String type = Translate.getTranslate("account.user.type.no_connection");
                     Label UUIDLabel = new Label(type);
                     UUIDLabel.setFont(Font.font("Consolas", FontWeight.BOLD, FontPosture.REGULAR, 40f));
                     setCanTakeAllSize(UUIDLabel);
@@ -199,7 +199,7 @@ public class Account extends  ContentPanel{
                     userPane.getChildren().add(UUIDLabel);
                 }
             }else{
-                String type = Translate.getTranslate("account.user_type.offline");
+                String type = Translate.getTranslate("account.user.type.offline");
                 Label UUIDLabel = new Label(type);
                 UUIDLabel.setFont(Font.font("Consolas", FontWeight.BOLD, FontPosture.REGULAR, 40f));
                 setCanTakeAllSize(UUIDLabel);

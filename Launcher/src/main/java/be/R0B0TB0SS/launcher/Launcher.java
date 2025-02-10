@@ -7,6 +7,7 @@ import be.R0B0TB0SS.launcher.ui.PanelManager;
 import be.R0B0TB0SS.launcher.ui.panels.pages.App;
 import be.R0B0TB0SS.launcher.ui.panels.pages.Login;
 import be.R0B0TB0SS.launcher.utils.debug.Debugger;
+import be.R0B0TB0SS.launcher.utils.translate.Translate;
 import fr.flowarg.flowlogger.ILogger;
 import fr.flowarg.flowlogger.Logger;
 import fr.theshark34.openlauncherlib.minecraft.AuthInfos;
@@ -26,10 +27,9 @@ import javafx.application.Platform;
 import javafx.stage.Stage;
 
 
-public class Launcher
-        extends Application {
+public class Launcher extends Application {
 
-    public static String VERSION = "1.0.10";
+    public static String VERSION = "1.0.11";
     private static Launcher instance;
     private final ILogger logger;
     public static final Path launcherDir = GameDirGenerator.createGameDir("robossgames", true);
@@ -40,7 +40,7 @@ public class Launcher
         URL url;
         try {
             url = new URL(imageUrl);
-            Launcher.getInstance().getLogger().info("Download " + url);
+            Launcher.getInstance().getLogger().info("Download: " + url);
             InputStream is = url.openStream();
             OutputStream os = new FileOutputStream(destinationFile);
 
@@ -82,6 +82,7 @@ public class Launcher
         Debugger.debugData();
         this.logger.info("Starting");
         this.logger.info("Version: V"+VERSION);
+       Translate.languageList();
         PanelManager panelManager = new PanelManager(this, stage);
         panelManager.init();
         panelManager.start();
@@ -121,7 +122,6 @@ public class Launcher
                             response.getAccessToken(),
                             response.getProfile().getId()
                     ));
-
                     String avatarUrl = "https://mc-heads.net/head/" + Launcher.getInstance().getAuthInfos().getUuid() + ".png/64";
                     downloadFile(avatarUrl, launcherDir.resolve("player_head.png").toString());
                     String bodyUrl = "https://mc-heads.net/body/" + Launcher.getInstance().getAuthInfos().getUuid() + ".png/96";
@@ -189,7 +189,4 @@ public class Launcher
         System.exit(0);
     }
 
-   /* public void hideWindow() {
-        this.panelManager.getStage().hide();
-    }*/
 }

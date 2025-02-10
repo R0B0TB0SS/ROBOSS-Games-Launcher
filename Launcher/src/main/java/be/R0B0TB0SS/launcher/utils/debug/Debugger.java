@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Debugger {
-    public static DebugData debugData() {
+    public static void debugData() {
 
         final String date = String.format("[%s] ", new SimpleDateFormat("hh:mm:ss").format(new Date()));
         DebugData debugData = new DebugData();
@@ -24,6 +24,5 @@ public class Debugger {
         System.out.println("Date: " + debugData.getDate2());
         System.out.println("      " + debugData.getDate());
         System.out.println("--------------------");
-        return debugData;
     }
 }

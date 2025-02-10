@@ -19,10 +19,10 @@ import java.util.Objects;
 
 public class App extends Panel {
     GridPane sidemenu = new GridPane();
-    GridPane navContent = new GridPane();
+    public static GridPane navContent = new GridPane();
 
     Node activeLink = null;
-    ContentPanel currentPage = null;
+    public static ContentPanel currentPage = null;
 
     Button homeBtn, settingsBtn , accBtn, VanillaBtn,CurseBtn;
 
@@ -54,11 +54,11 @@ public class App extends Panel {
         this.layout.getColumnConstraints().addAll(columnConstraints, new ColumnConstraints());
 
         // Side menu
-       this.layout.add(sidemenu, 0, 0);
+        this.layout.add(sidemenu, 0, 0);
         sidemenu.getStyleClass().add("sidemenu");
-       setLeft(sidemenu);
-       setCenterH(sidemenu);
-      setCenterV(sidemenu);
+        setLeft(sidemenu);
+        setCenterH(sidemenu);
+        setCenterV(sidemenu);
 
         // Background Image
         GridPane bgImage = new GridPane();
@@ -234,7 +234,7 @@ public class App extends Panel {
         accBtn.setTranslateY(40d);
         accBtn.setOnMouseClicked(e -> setPage(new Account(), accBtn));
 
-        if(Objects.equals(saver.get("alphaCheck"), "true")){sidemenu.getChildren().addAll( settingsBtn,accBtn,homeBtn,CurseBtn,VanillaBtn);}else{sidemenu.getChildren().addAll( settingsBtn,accBtn,homeBtn,VanillaBtn);}
+        sidemenu.getChildren().addAll( settingsBtn,accBtn,homeBtn,CurseBtn,VanillaBtn);
 
 
     }
@@ -246,13 +246,13 @@ public class App extends Panel {
             setPage(new RobossFactory(), homeBtn);
         } else if (Objects.equals(saver.get("LauncherPage"), "modded")) {
             setPage(new Modded(), CurseBtn);
-        }else if(Objects.equals(saver.get("LauncherPage"), "vanilla"))
-        {
+        }else if(Objects.equals(saver.get("LauncherPage"), "vanilla")) {
             setPage(new Vanilla(), VanillaBtn);
         }else{
             setPage(new RobossFactory(), homeBtn);
         }
     }
+
 
     public void setPage(ContentPanel panel, Node navButton) {
         if (currentPage instanceof RobossFactory && ((RobossFactory) currentPage).isDownloading()) {
@@ -269,9 +269,9 @@ public class App extends Panel {
         activeLink = navButton;
         activeLink.getStyleClass().add("active");
 
-        this.navContent.getChildren().clear();
+        navContent.getChildren().clear();
         if (panel != null) {
-            this.navContent.getChildren().add(panel.getLayout());
+            navContent.getChildren().add(panel.getLayout());
             currentPage = panel;
             if (panel.getStylesheetPath() != null) {
                 this.panelManager.getStage().getScene().getStylesheets().clear();

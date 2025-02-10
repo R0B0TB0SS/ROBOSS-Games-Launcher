@@ -2,6 +2,8 @@ package be.R0B0TB0SS.launcher.utils.tray;
 
 import be.R0B0TB0SS.launcher.utils.os.OsCheck;
 import be.R0B0TB0SS.launcher.utils.translate.Translate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,6 +15,7 @@ import java.net.URL;
 
 public class RobossSystemTray {
 
+    private static final Logger log = LoggerFactory.getLogger(RobossSystemTray.class);
     private static TrayIcon trayIcon;
 
     private static JPopupMenu trayMenu;
@@ -23,7 +26,7 @@ public class RobossSystemTray {
         try {
             img = Toolkit.getDefaultToolkit().createImage(RobossSystemTray.class.getClassLoader().getResource("images/icon.png"));
         } catch (Exception var4) {
-            var4.printStackTrace();
+            log.error("e: ", var4);
         }
         return img;
     }
@@ -45,7 +48,7 @@ public class RobossSystemTray {
                     try {
                         Desktop.getDesktop().open(appdata);
                     } catch (Exception ex) {
-                        System.out.println(ex);
+                        log.error("e: ", ex);
                     }
             });
             trayMenu.add(appdataItem);
@@ -56,7 +59,7 @@ public class RobossSystemTray {
                     try {
                         Desktop.getDesktop().open(install);
                     } catch (Exception ex) {
-                        System.out.println(ex);
+                        log.error("e: ", ex);
                     }
             });
             trayMenu.add(dataItem);
@@ -66,7 +69,7 @@ public class RobossSystemTray {
                 try {
                     Desktop.getDesktop().browse((new URL("https://robossfactory.alwaysdata.net/")).toURI());
                 } catch (Exception ex) {
-                    System.out.println(ex);
+                    log.error("e: ", ex);
                 }
             });
             trayMenu.add(siteItem);
@@ -96,7 +99,7 @@ public class RobossSystemTray {
                 SystemTray.getSystemTray().add(trayIcon);
             }
         } catch (Exception e) {
-            System.out.println(e);
+            log.error("e: ", e);
         }
 
     }

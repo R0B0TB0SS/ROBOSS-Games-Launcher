@@ -2,6 +2,7 @@ package be.R0B0TB0SS.launcher.ui.panels.pages.content;
 
 import be.R0B0TB0SS.launcher.Launcher;
 import be.R0B0TB0SS.launcher.ui.PanelManager;
+import be.R0B0TB0SS.launcher.ui.panels.pages.App;
 import be.R0B0TB0SS.launcher.utils.translate.Translate;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -172,52 +173,27 @@ public class Settings extends ContentPanel {
 
         final ComboBox<String> langcombobox = new ComboBox<>();
 
-        try {
-            InputStream inputStream = Translate.class.getClassLoader().getResourceAsStream("lang/lang.json");
-            JsonObject mainJsonObject = IOUtils.readJson(inputStream).getAsJsonObject();
-            JsonArray langArray = (JsonArray) mainJsonObject.get("translation");
-
-            for (Object o : langArray) {
-                JsonObject versionNumber = (JsonObject) o;
-                String lang = String.valueOf(versionNumber.get("language")).split("\"")[1];
-                langcombobox.getItems().add(lang);
-
-            }
-        } catch (Exception e) {
-            System.out.println(e);
+        for (Object o : Translate.languageList()) {
+            langcombobox.getItems().add((String) o);
         }
-        langcombobox.getItems().addAll();
         langcombobox.getStyleClass().add("acc-selector");
         setLeft(langcombobox);
         setCanTakeAllSize(langcombobox);
         setTop(langcombobox);
         langcombobox.setTranslateX(35d);
         langcombobox.setTranslateY(325d);
-        try {
-            String language = saver.get("language");
-
-            langcombobox.setValue(language);
-        }catch (Exception e){
+        if(Translate.isLanguageExist(saver.get("language"))){
+            langcombobox.setValue(Translate.getLanguage());
+        }else{
             langcombobox.setValue("English");
 
         }
-        contentPane.getChildren().add(langcombobox);
-        //alpha
-        CheckBox alphaCheck = new CheckBox(Translate.getTranslate("setting.alpha.checkbox"));
-        setCanTakeAllSize(alphaCheck);
-        setCenterV(alphaCheck);
-        alphaCheck.getStyleClass().add("login-mode-chk");
-        alphaCheck.setMaxWidth(325d);
-        alphaCheck.setTranslateY(90d);
-        alphaCheck.setSelected(Objects.equals(saver.get("alphaCheck"), "true"));
-        alphaCheck.selectedProperty().addListener((e, old, newValue) -> {
-            if(Objects.equals(saver.get("alphaCheck"), "false")) {
-                saver.set("alphaCheck", "true");
-            }else{
-                saver.set("alphaCheck", "false");
-            }
+        langcombobox.setOnHidden(e -> {
+            saver.set("language", Translate.getFileName(langcombobox.getValue()));
+            logger.info("Language is now: "+Translate.getFileName(langcombobox.getValue()));
+            refrech(new Settings());
         });
-        contentPane.getChildren().add(alphaCheck);
+        contentPane.getChildren().add(langcombobox);
 
         //version
         Label version = new Label(Translate.getTranslate("setting.version")+ Launcher.VERSION);
@@ -256,12 +232,6 @@ public class Settings extends ContentPanel {
             }
             this.logger.info("The Launcher pref is \"" + pref+ "\"");
 
-            String lang = langcombobox.getValue();
-            saver.set("language", lang);
-            this.logger.info("The Launcher language is \"" + lang+ "\"");
-
-
-
             var iconViewd = new MaterialDesignIconView<>(MaterialDesignIcon.C.CHECK);
             iconViewd.getStyleClass().add("save-icon");
             saveBtn.setGraphic(iconViewd);
@@ -270,6 +240,14 @@ public class Settings extends ContentPanel {
         contentPane.getChildren().add(saveBtn);
 
     }
-
+    private void refrech(ContentPanel panel){
+        App.navContent.getChildren().clear();
+        if (panel != null) {
+            App.navContent.getChildren().add(panel.getLayout());
+            App.currentPage = panel;
+            panel.init(panelManager);
+            panel.onShow();
+        }
+    }
 
 }
