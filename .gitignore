@@ -94,3 +94,7 @@ Launcher/.gradle/buildOutputCleanup/outputFiles.bin
 Launcher/build/tmp/compileJava/previous-compilation-data.bin
 /Launcher/build
 /Launcher/out
+Launcher/gradlew
+Launcher/build.gradle
+Launcher/settings.gradle
+Launcher/gradlew.bat
