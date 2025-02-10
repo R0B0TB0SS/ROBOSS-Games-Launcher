@@ -93,3 +93,4 @@ Launcher/.gradle/7.5.1/dependencies-accessors/dependencies-accessors.lock
 Launcher/.gradle/buildOutputCleanup/outputFiles.bin
 Launcher/build/tmp/compileJava/previous-compilation-data.bin
 /Launcher/build
+/Launcher/out
