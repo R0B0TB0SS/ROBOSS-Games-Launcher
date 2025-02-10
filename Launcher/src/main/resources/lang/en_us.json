@@ -1,7 +1,7 @@
 {
   "account.pagename":"Account",
   "account.user":"User:",
-  "account.use.type":"Account type:",
+  "account.user.type":"Account type:",
   "account.user.type.no_connection":"No connection",
   "account.user.type.offline":"Offline",
   "btn.save":"Save",
