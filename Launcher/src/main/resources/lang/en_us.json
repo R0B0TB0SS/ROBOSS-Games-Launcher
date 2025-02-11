@@ -47,5 +47,6 @@
   "instance.textfield.projectid": "Enter the CurseForge project's ID",
   "instance.textfield.fileid": "Enter the project's file's ID",
   "instance.save.curseforge.intError": "Error the project and file ID must be numbers",
-  "instance.save.general.nameUsed": "This instance's name is already use please enter another"
+  "instance.save.general.nameUsed": "This instance's name is already use please enter another",
+  "instances.curseforge.checkbox": "CurseForge Modpack"
 }

@@ -46,7 +46,7 @@ public class JsonUtils {
         }
 
     }
-    public static void addInstance(String name,String type,String gameVersion,String projectID,String fileID){
+    public static void addInstance(String name,String type,String modloaderVersion,String projectID,String fileID){
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
@@ -64,7 +64,7 @@ public class JsonUtils {
             Map<String, String> nouvelleInstance = new HashMap<>();
             nouvelleInstance.put("name", name);
             nouvelleInstance.put("type", type);
-            nouvelleInstance.put("gameVersion", gameVersion);
+            nouvelleInstance.put("modloaderVersion", modloaderVersion);
             nouvelleInstance.put("projectId", String.valueOf(projectID));
             nouvelleInstance.put("fileId", String.valueOf(fileID));
 
@@ -82,7 +82,7 @@ public class JsonUtils {
         }
 
     }
-    public static void addInstance(String name,String type,String gameVersion,String modloaderVersion){
+    public static void addInstance(String name,String type,String modloaderVersion){
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         // Lire le fichier JSON existant
@@ -97,7 +97,6 @@ public class JsonUtils {
             Map<String, String> nouvelleInstance = new HashMap<>();
             nouvelleInstance.put("name", name);
             nouvelleInstance.put("type", type);
-            nouvelleInstance.put("gameVersion", gameVersion);
             nouvelleInstance.put("modloaderVersion", modloaderVersion);
 
             List<Map<String, String>> instances = (List<Map<String, String>>) data.get("instances");

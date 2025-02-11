@@ -13,8 +13,8 @@ import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import fr.theshark34.openlauncherlib.util.Saver;
 import javafx.geometry.Insets;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
@@ -43,6 +43,7 @@ public class CreateInstance extends ContentPanel{
     TextField fileID = new TextField();
     Button savebtn = new Button(Translate.getTranslate("btn.save"));
     Button delbtn = new Button(Translate.getTranslate("btn.delete"));
+    CheckBox isCursforgemodpack = new CheckBox(Translate.getTranslate("instances.curseforge.checkbox"));
 
     @Override
     public String getName() {
@@ -94,7 +95,7 @@ public class CreateInstance extends ContentPanel{
         modLoader.setTranslateY(-30d);
         setCenterH(modLoader);
         modLoader.setValue(Translate.getTranslate("instance.modloader.select"));
-        modLoader.getItems().addAll("Forge","Fabric","NeoForge","CurseForge");
+        modLoader.getItems().addAll("Forge","Fabric","NeoForge");
 
         projectID.setVisible(false);
         projectID.setTranslateY(-10d);
@@ -117,7 +118,9 @@ public class CreateInstance extends ContentPanel{
         delbtn.setTranslateY(50d);
         delbtn.setTranslateX(-50d);
 
-        contentPane.getChildren().addAll(modLoader,fileID,projectID,name,savebtn,delbtn);
+        isCursforgemodpack.setVisible(false);
+
+        contentPane.getChildren().addAll(modLoader,fileID,projectID,name,savebtn,delbtn,isCursforgemodpack);
     }
 
 
@@ -215,13 +218,25 @@ public class CreateInstance extends ContentPanel{
                     });
                 }
                 modLoader.setOnHidden(ex ->{
-                    if(Objects.equals(modLoader.getValue(),"CurseForge")){
+                    /*if(Objects.equals(modLoader.getValue(),"CurseForge")){
                         projectID.setText("");
                         fileID.setText("");
                         projectID.setVisible(true);
                         fileID.setVisible(true);
-                    }
+                    }*/
                     savebtn.setVisible(true);
+                    isCursforgemodpack.setVisible(true);
+                    isCursforgemodpack.setOnMouseClicked(cl->{
+                        if(isCursforgemodpack.isSelected()){
+                            projectID.setText("");
+                            fileID.setText("");
+                            projectID.setVisible(true);
+                            fileID.setVisible(true);
+                        }else{
+                            projectID.setVisible(false);
+                            fileID.setVisible(false);
+                        }
+                    });
                     savebtn.setOnMouseClicked(ev->{
                         if (!JsonUtils.isNameUsed(name.getText())){
                             if(projectID.getText().matches("\\d+") && fileID.getText().matches("\\d+") ){
