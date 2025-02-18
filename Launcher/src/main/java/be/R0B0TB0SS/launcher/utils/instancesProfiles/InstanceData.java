@@ -14,7 +14,7 @@ import java.util.Objects;
 
 public class InstanceData {
     private static final Path launcherDir = Launcher.getInstance().getLauncherDir();
-    private static final Path gameDir = Path.of(launcherDir + "/versions/modded");
+    private static final Path gameDir = Path.of(launcherDir + "/versions/instances");
     private static final String instanceList = String.valueOf(Path.of(gameDir+"/instances.json"));
 
     public static String getValue(String type,String name) {
@@ -33,7 +33,6 @@ public class InstanceData {
                 }
             }
         } catch (Exception ex) {
-            //this.logger.err(String.valueOf(ex));
         }
         return "Error";
     }

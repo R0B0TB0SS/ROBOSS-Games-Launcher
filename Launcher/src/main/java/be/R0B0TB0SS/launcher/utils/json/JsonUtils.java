@@ -6,7 +6,9 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -14,10 +16,34 @@ import java.util.Map;
 
 public class JsonUtils {
     private static final Path launcherDir = Launcher.getInstance().getLauncherDir();
-    private static final Path gameDir = Path.of(launcherDir + "/versions/modded");
+    private static final Path gameDir = Path.of(launcherDir + "/versions/instances");
     private static final String instanceList = String.valueOf(Path.of(gameDir+"/instances.json"));
 
+
+    public static void createFile(){
+        String jsonContent = "{\n" +
+                "  \"latest\": {\n" +
+                "    \"name\": \"Select Instance\"\n" +
+                "  },\n" +
+                "  \"instances\": []\n" +
+                "}";
+        Path path = Paths.get(instanceList);
+
+        // Vérifier si le fichier existe
+        try {
+            Files.createDirectories(path.getParent());
+            if (!Files.exists(path)) {
+                FileWriter fileWriter = new FileWriter(instanceList);
+                fileWriter.write(jsonContent);
+                fileWriter.close();
+                System.out.println("Le fichier a été créé.");
+            }
+        } catch (IOException e) {
+            System.out.println("Une erreur s'est produite lors de la création du fichier : " + e.getMessage());
+        }
+    }
     public static void modifyLatest(String instance){
+        createFile();
         // Créer un objet Gson
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
@@ -47,7 +73,7 @@ public class JsonUtils {
 
     }
     public static void addInstance(String name,String type,String modloaderVersion,String projectID,String fileID){
-
+        createFile();
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         // Lire le fichier JSON existant
@@ -83,6 +109,7 @@ public class JsonUtils {
 
     }
     public static void addInstance(String name,String type,String modloaderVersion){
+        createFile();
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         // Lire le fichier JSON existant
@@ -109,6 +136,7 @@ public class JsonUtils {
         } else {System.out.println("Impossible de lire les données du fichier JSON.");}
     }
     public static void removeInstance(String instance){
+        createFile();
         // Créer un objet Gson
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
@@ -146,7 +174,7 @@ public class JsonUtils {
         }
     }
     public static void modifyInstance(String name,String category,String data){
-        {
+        createFile();
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
             try (FileReader reader = new FileReader(instanceList)) {
@@ -170,9 +198,9 @@ public class JsonUtils {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
     }
     public static boolean isNameUsed(String name) {
+        createFile();
         // Créer un objet Gson
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 

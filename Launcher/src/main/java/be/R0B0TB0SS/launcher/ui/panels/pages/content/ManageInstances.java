@@ -29,14 +29,14 @@ import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.util.Objects;
 
-public class CreateInstance extends ContentPanel{
+public class ManageInstances extends ContentPanel{
 
     GridPane contentPane = new GridPane();
     final ComboBox<String> instance = new ComboBox<>();
     final ComboBox<String> modLoader = new ComboBox<>();
     private final Saver saver = Launcher.getInstance().getSaver();
     private static final Path launcherDir = Launcher.getInstance().getLauncherDir();
-    private static final Path gameDir = Path.of(launcherDir + "/versions/modded");
+    private static final Path gameDir = Path.of(launcherDir + "/versions/instances");
     private static final String instanceList = String.valueOf(Path.of(gameDir+"/instances.json"));
     TextField name = new TextField();
     TextField modloaderversion = new TextField();
@@ -44,7 +44,7 @@ public class CreateInstance extends ContentPanel{
     TextField fileID = new TextField();
     Button savebtn = new Button(Translate.getTranslate("btn.save"));
     Button delbtn = new Button(Translate.getTranslate("btn.delete"));
-    CheckBox isCursforgemodpack = new CheckBox(Translate.getTranslate("instances.curseforge.checkbox"));
+    CheckBox isCursforgemodpack = new CheckBox(Translate.getTranslate("mnginstance.curseforge.checkbox"));
 
     @Override
     public String getName() {
@@ -71,7 +71,7 @@ public class CreateInstance extends ContentPanel{
         this.layout.getChildren().add(contentPane);
 
         // Titre
-        Label title = new Label(Translate.getTranslate("instance.pagename"));
+        Label title = new Label(Translate.getTranslate("mnginstance.pagename"));
         title.setFont(Font.font("Consolas", FontWeight.BOLD, FontPosture.REGULAR, 25f));
         title.getStyleClass().add("settings-title");
         setLeft(title);
@@ -90,31 +90,31 @@ public class CreateInstance extends ContentPanel{
         name.setTranslateY(-90d);
         name.setMaxWidth(200d);
         setCenterH(name);
-        name.setPromptText(Translate.getTranslate("instance.textfield.name"));
+        name.setPromptText(Translate.getTranslate("mnginstance.textfield.name"));
 
         modLoader.setVisible(false);
         modLoader.setTranslateY(-60d);
         setCenterH(modLoader);
-        modLoader.setValue(Translate.getTranslate("instance.modloader.select"));
+        modLoader.setValue(Translate.getTranslate("mnginstance.modloader.select"));
         modLoader.getItems().addAll("Forge","Fabric","NeoForge");
 
         modloaderversion.setVisible(false);
         modloaderversion.setTranslateY(-30d);
         modloaderversion.setMaxWidth(200d);
         setCenterH(modloaderversion);
-        modloaderversion.setPromptText(Translate.getTranslate("instance.textfield.modloaderversion"));
+        modloaderversion.setPromptText(Translate.getTranslate("mnginstance.textfield.modloaderversion"));
 
         projectID.setVisible(false);
         projectID.setTranslateY(30d);
         projectID.setMaxWidth(200d);
         setCenterH(projectID);
-        projectID.setPromptText(Translate.getTranslate("instance.textfield.projectid"));
+        projectID.setPromptText(Translate.getTranslate("mnginstance.textfield.projectid"));
 
         fileID.setVisible(false);
         fileID.setTranslateY(60d);
         fileID.setMaxWidth(200d);
         setCenterH(fileID);
-        fileID.setPromptText(Translate.getTranslate("instance.textfield.fileid"));
+        fileID.setPromptText(Translate.getTranslate("mnginstance.textfield.fileid"));
 
         savebtn.setVisible(false);
         setCenterH(savebtn);
@@ -142,10 +142,10 @@ public class CreateInstance extends ContentPanel{
         back.setTranslateX(-20d);
         back.getStyleClass().add("back-btn");
         this.contentPane.getChildren().add(back);
-        back.setOnMouseClicked(e -> this.setPage(new Modded()));
+        back.setOnMouseClicked(e -> this.setPage(new Instances()));
     }
     private void setPage(ContentPanel panel) {
-        if (App.currentPage instanceof Modded && ((Modded) App.currentPage).isDownloading()) {
+        if (App.currentPage instanceof Instances && ((Instances) App.currentPage).isDownloading()) {
             return;
         }
 
@@ -154,7 +154,7 @@ public class CreateInstance extends ContentPanel{
             App.navContent.getChildren().add(panel.getLayout());
             App.currentPage = panel;
             if (panel.getStylesheetPath() != null) {
-                if (!panel.equals(new CreateInstance())){panelManager.getStage().getScene().getStylesheets().remove(getStylesheetPath());}
+                if (!panel.equals(new ManageInstances())){panelManager.getStage().getScene().getStylesheets().remove(getStylesheetPath());}
 
             }
             panel.init(panelManager);
@@ -174,12 +174,13 @@ public class CreateInstance extends ContentPanel{
     private void InstanceField() {
         String latID = null;
         try {
+            JsonUtils.createFile();
             JsonReader reader = new JsonReader(new InputStreamReader(
                     new FileInputStream(instanceList)));
             JsonParser jsonParser = new JsonParser();
             JsonObject mainJsonObject = jsonParser.parse(reader).getAsJsonObject();
 
-            instance.getItems().add(Translate.getTranslate("instance.selector.create"));
+            instance.getItems().add(Translate.getTranslate("mnginstance.selector.create"));
             JsonArray versionArray = (JsonArray) mainJsonObject.get("instances");
             for (Object o : versionArray) {
                 JsonObject versionnumber = (JsonObject) o;
@@ -194,7 +195,7 @@ public class CreateInstance extends ContentPanel{
         setCenterV(instance);
         instance.setTranslateX(0d);
         setTop(instance);
-        instance.setValue(Translate.getTranslate("instance.selector.select"));
+        instance.setValue(Translate.getTranslate("mnginstance.selector.select"));
         instance.setMaxWidth(180);
         instance.setTranslateY(37d);
         instance.getStyleClass().add("version-combobox");
@@ -203,29 +204,29 @@ public class CreateInstance extends ContentPanel{
             name.setVisible(false);
             modLoader.setVisible(false);
             modloaderversion.setVisible(false);
-            modLoader.setValue(Translate.getTranslate("instance.modloader.select"));
+            modLoader.setValue(Translate.getTranslate("mnginstance.modloader.select"));
             projectID.setVisible(false);
             fileID.setVisible(false);
             savebtn.setVisible(false);
             delbtn.setVisible(false);
-            if (!Objects.equals(instance.getValue(), Translate.getTranslate("instance.selector.select"))) {
+            if (!Objects.equals(instance.getValue(), Translate.getTranslate("mnginstance.selector.select"))) {
                 this.logger.info(instance.getValue());
                 name.setText("");
                 name.setVisible(true);
                 modLoader.setVisible(true);
-                if (!Objects.equals(instance.getValue(),Translate.getTranslate("instance.selector.create"))){
+                if (!Objects.equals(instance.getValue(),Translate.getTranslate("mnginstance.selector.create"))){
                     name.setText(instance.getValue());
                     modLoader.setValue(InstanceData.getValue("type",instance.getValue()));
-                    modloaderversion.setText(InstanceData.getValue("",instance.getValue()));
+                    modloaderversion.setText(InstanceData.getValue("modloaderVersion",instance.getValue()));
                     modloaderversion.setVisible(true);
                     delbtn.setVisible(true);
                     delbtn.setOnMouseClicked(em->{
                         JsonUtils.removeInstance(instance.getValue());
-                        refrech(new CreateInstance());
+                        refrech(new ManageInstances());
                     });
                 }
                 modLoader.setOnHidden(ex ->{
-                    if (!Objects.equals(modLoader.getValue(), Translate.getTranslate("instance.modloader.select"))){
+                    if (!Objects.equals(modLoader.getValue(), Translate.getTranslate("mnginstance.modloader.select"))){
                         savebtn.setVisible(true);
                         isCursforgemodpack.setVisible(true);
                         modloaderversion.setText("");
@@ -247,17 +248,17 @@ public class CreateInstance extends ContentPanel{
                             if(!isCursforgemodpack.isSelected()){
                                 System.out.println("test");
                                 JsonUtils.addInstance(name.getText(),modLoader.getValue(),modloaderversion.getText());
-                                refrech(new CreateInstance());
+                                refrech(new ManageInstances());
                             }else{
                                 if(projectID.getText().matches("\\d+") && fileID.getText().matches("\\d+")){
                                     JsonUtils.addInstance(name.getText(),modLoader.getValue(),modloaderversion.getText(),projectID.getText(),fileID.getText());
-                                    refrech(new CreateInstance());
+                                    refrech(new ManageInstances());
                                 }else{
-                                    Notification.sendSystemNotification(Translate.getTranslate("instance.save.curseforge.intError"), TrayIcon.MessageType.ERROR);
+                                    Notification.sendSystemNotification(Translate.getTranslate("mnginstance.save.curseforge.intError"), TrayIcon.MessageType.ERROR);
                                 }
                             }
                         }else{
-                            Notification.sendSystemNotification(Translate.getTranslate("instance.save.general.nameUsed"), TrayIcon.MessageType.ERROR);
+                            Notification.sendSystemNotification(Translate.getTranslate("mnginstance.save.general.nameUsed"), TrayIcon.MessageType.ERROR);
                         }
 
                     });

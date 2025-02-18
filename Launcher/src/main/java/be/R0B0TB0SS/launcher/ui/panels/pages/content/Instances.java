@@ -25,11 +25,11 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
 
-public class Modded extends ContentPanel{
+public class Instances extends ContentPanel{
     final ComboBox<String> instance = new ComboBox<>();
     private final Saver saver = Launcher.getInstance().getSaver();
     private static final Path launcherDir = Launcher.getInstance().getLauncherDir();
-    private static final Path gameDir = Path.of(launcherDir + "/versions/modded");
+    private static final Path gameDir = Path.of(launcherDir + "/versions/instances");
     private static final String instanceList = String.valueOf(Path.of(gameDir+"/instances.json"));
     private static String instanceSelected =null;
     boolean isDownloading = false;
@@ -114,11 +114,11 @@ public class Modded extends ContentPanel{
         cisntbtn.setTranslateY(0d);
         cisntbtn.getStyleClass().add("cisntbtn-btn");
         this.boxPane.getChildren().add(cisntbtn);
-        cisntbtn.setOnMouseClicked(e -> this.setPage(new CreateInstance()));
+        cisntbtn.setOnMouseClicked(e -> this.setPage(new ManageInstances()));
     }
 
     private void setPage(ContentPanel panel) {
-        if (App.currentPage instanceof Modded && ((Modded) App.currentPage).isDownloading()) {
+        if (App.currentPage instanceof Instances && ((Instances) App.currentPage).isDownloading()) {
             return;
         }
 
@@ -142,7 +142,7 @@ public class Modded extends ContentPanel{
     }
 
     private void NameLabem(){
-        Label roboss = new Label(Translate.getTranslate("modded.name"));
+        Label roboss = new Label(Translate.getTranslate("instance.pagename"));
         roboss.setFont(Font.font("Consolas", FontWeight.BOLD, FontPosture.REGULAR, 18f));
         roboss.setStyle("-fx-text-fill: white;");
         setLeft(roboss);

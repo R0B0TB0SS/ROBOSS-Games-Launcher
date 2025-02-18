@@ -133,7 +133,7 @@ public class App extends Panel {
         setCenterV(CurseBtn);
         CurseBtn.setTranslateX(20d);
         CurseBtn.setTranslateY(100d);
-        CurseBtn.setOnMouseClicked(e -> {setPage(new Modded(), CurseBtn); saver.set("LauncherPage", "modded");});
+        CurseBtn.setOnMouseClicked(e -> {setPage(new Instances(), CurseBtn); saver.set("LauncherPage", "modded");});
 
         String cogimurl = "images/cog.png";
         ImageView cogimView = new ImageView();
@@ -245,7 +245,7 @@ public class App extends Panel {
         if(Objects.equals(saver.get("LauncherPage"), "home")) {
             setPage(new RobossFactory(), homeBtn);
         } else if (Objects.equals(saver.get("LauncherPage"), "modded")) {
-            setPage(new Modded(), CurseBtn);
+            setPage(new Instances(), CurseBtn);
         }else if(Objects.equals(saver.get("LauncherPage"), "vanilla")) {
             setPage(new Vanilla(), VanillaBtn);
         }else{
@@ -261,7 +261,7 @@ public class App extends Panel {
         if (currentPage instanceof Vanilla && ((Vanilla) currentPage).isDownloading()) {
             return;
         }
-        if (currentPage instanceof Modded && ((Modded) currentPage).isDownloading()) {
+        if (currentPage instanceof Instances && ((Instances) currentPage).isDownloading()) {
             return;
         }
         if (activeLink != null)

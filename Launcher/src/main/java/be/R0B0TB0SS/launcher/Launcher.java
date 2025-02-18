@@ -87,7 +87,7 @@ public class Launcher extends Application {
         panelManager.init();
         panelManager.start();
         if(Objects.equals(saver.get("language"), null)){
-            saver.set("English","language");
+            saver.set("en_us","language");
         }
 
        Platform.runLater(() -> {if (this.isUserAlreadyLoggedIn()) {
