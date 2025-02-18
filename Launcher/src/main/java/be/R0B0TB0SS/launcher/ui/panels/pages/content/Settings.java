@@ -240,14 +240,5 @@ public class Settings extends ContentPanel {
         contentPane.getChildren().add(saveBtn);
 
     }
-    private void refrech(ContentPanel panel){
-        App.navContent.getChildren().clear();
-        if (panel != null) {
-            App.navContent.getChildren().add(panel.getLayout());
-            App.currentPage = panel;
-            panel.init(panelManager);
-            panel.onShow();
-        }
-    }
 
 }

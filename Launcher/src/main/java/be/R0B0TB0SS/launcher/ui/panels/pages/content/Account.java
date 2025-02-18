@@ -72,7 +72,7 @@ public class Account extends  ContentPanel{
             GridPane userPane = new GridPane();
             userPane.setTranslateY(100d);
             setCanTakeAllWidth(userPane);
-            userPane.setMaxHeight(480d);
+            userPane.setMaxHeight(PanelManager.getLauncherHeight()*0.5);
             userPane.setMinWidth(80);
             userPane.getStyleClass().add("user-pane");
             setTop(userPane);

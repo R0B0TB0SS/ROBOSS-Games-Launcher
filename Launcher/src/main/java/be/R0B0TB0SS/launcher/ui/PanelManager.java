@@ -2,19 +2,15 @@ package be.R0B0TB0SS.launcher.ui;
 
 import be.R0B0TB0SS.launcher.Launcher;
 import be.R0B0TB0SS.launcher.ui.panel.IPanel;
-import be.R0B0TB0SS.launcher.ui.panels.partials.TopBar;
 import be.R0B0TB0SS.launcher.utils.tray.RobossSystemTray;
 import com.goxr3plus.fxborderlessscene.borderless.BorderlessScene;
 import fr.flowarg.flowcompat.Platform;
 import javafx.geometry.HPos;
-import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -23,9 +19,9 @@ import java.awt.*;
 
 public class PanelManager {
     private final Launcher launcher;
-    private final Stage stage;
+    public final Stage stage;
     private static GridPane layout;
-    Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();
+    static Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();
     private final GridPane contentPane = new GridPane();
     private  final ImageView loadingtext= new ImageView(new Image("images/loading.png"));
     private  final ImageView icon= new ImageView(new Image("images/icon.png"));
@@ -38,28 +34,28 @@ public class PanelManager {
     public void start() {
         RobossSystemTray.create();
         loadingtext.setPreserveRatio(true);
-        loadingtext.setFitHeight(30);
-        loadingtext.setTranslateY(stage.getHeight()-50);
+        loadingtext.setFitHeight(stage.getHeight()*0.05);
+        loadingtext.setTranslateY(stage.getHeight()*0.55);
         GridPane.setHalignment(loadingtext , HPos.CENTER);
         layout.getChildren().add(loadingtext);
 
         icon.setPreserveRatio(true);
-        icon.setFitHeight(400);
+        icon.setFitHeight(stage.getHeight()*0.55);
         GridPane.setHalignment(icon , HPos.CENTER);
-        icon.setTranslateY(50);
+        icon.setTranslateY(stage.getHeight()*0.05);
         layout.getChildren().add(icon);
 
         logo.setPreserveRatio(true);
-        logo.setFitWidth(400);
+        logo.setFitWidth(stage.getHeight()*0.55);
         GridPane.setHalignment(logo , HPos.CENTER);
-        logo.setTranslateY(425);
+        logo.setTranslateY(stage.getHeight()*0.35);
         layout.getChildren().add(logo);
     }
 
 
 
     public void init() {
-        int height = (int)(screenDimension.getHeight() * 0.666666);
+        int height = (int)(screenDimension.getHeight() * 0.66666);
         int width = (int)(screenDimension.getWidth() * 0.66666);
         this.stage.setTitle("ROBOSS Games Launcher");
         stage.getIcons().add(new Image("/images/icon.png"));
@@ -77,23 +73,23 @@ public class PanelManager {
             Scene scene = new Scene(layout);
             this.stage.setScene(scene);
         } else {
-            this.stage.initStyle(StageStyle.UNDECORATED);
-            TopBar topBar = new TopBar();
-            BorderlessScene scene = new BorderlessScene(this.stage, StageStyle.UNDECORATED, layout);
+            this.stage.initStyle(StageStyle.DECORATED);
+            //TopBar topBar = new TopBar();
+            BorderlessScene scene = new BorderlessScene(this.stage, StageStyle.DECORATED, layout);
             scene.setResizable(true);
-            scene.setMoveControl(topBar.getLayout());
+            //scene.setMoveControl(topBar.getLayout());
             scene.removeDefaultCSS();
 
 
             this.stage.setScene(scene);
 
-            RowConstraints topPaneContraints = new RowConstraints();
+            /*RowConstraints topPaneContraints = new RowConstraints();
             topPaneContraints.setValignment(VPos.TOP);
             topPaneContraints.setMinHeight(30);
             topPaneContraints.setMaxHeight(30);
             layout.getRowConstraints().addAll(topPaneContraints, new RowConstraints());
             layout.add(topBar.getLayout(), 0, 0);
-            topBar.init(this);
+            topBar.init(this);*/
 
 
 
@@ -129,5 +125,12 @@ public class PanelManager {
 
     public Launcher getLauncher() {
         return launcher;
+    }
+
+    public static double getLauncherWidth(){
+        return screenDimension.getWidth() * 0.66666;
+    }
+    public static double getLauncherHeight(){
+        return screenDimension.getHeight() * 0.66666;
     }
 }

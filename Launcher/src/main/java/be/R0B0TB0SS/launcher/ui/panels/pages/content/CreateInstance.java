@@ -39,6 +39,7 @@ public class CreateInstance extends ContentPanel{
     private static final Path gameDir = Path.of(launcherDir + "/versions/modded");
     private static final String instanceList = String.valueOf(Path.of(gameDir+"/instances.json"));
     TextField name = new TextField();
+    TextField modloaderversion = new TextField();
     TextField projectID = new TextField();
     TextField fileID = new TextField();
     Button savebtn = new Button(Translate.getTranslate("btn.save"));
@@ -86,31 +87,38 @@ public class CreateInstance extends ContentPanel{
     }
     private void form(){
         name.setVisible(false);
-        name.setTranslateY(-50d);
+        name.setTranslateY(-90d);
         name.setMaxWidth(200d);
         setCenterH(name);
         name.setPromptText(Translate.getTranslate("instance.textfield.name"));
 
         modLoader.setVisible(false);
-        modLoader.setTranslateY(-30d);
+        modLoader.setTranslateY(-60d);
         setCenterH(modLoader);
         modLoader.setValue(Translate.getTranslate("instance.modloader.select"));
         modLoader.getItems().addAll("Forge","Fabric","NeoForge");
 
+        modloaderversion.setVisible(false);
+        modloaderversion.setTranslateY(-30d);
+        modloaderversion.setMaxWidth(200d);
+        setCenterH(modloaderversion);
+        modloaderversion.setPromptText(Translate.getTranslate("instance.textfield.modloaderversion"));
+
         projectID.setVisible(false);
-        projectID.setTranslateY(-10d);
+        projectID.setTranslateY(30d);
         projectID.setMaxWidth(200d);
         setCenterH(projectID);
         projectID.setPromptText(Translate.getTranslate("instance.textfield.projectid"));
 
         fileID.setVisible(false);
-        fileID.setTranslateY(10d);
+        fileID.setTranslateY(60d);
         fileID.setMaxWidth(200d);
         setCenterH(fileID);
         fileID.setPromptText(Translate.getTranslate("instance.textfield.fileid"));
 
         savebtn.setVisible(false);
         setCenterH(savebtn);
+        savebtn.setTranslateY(90d);
 
         delbtn.setVisible(false);
         setRight(delbtn);
@@ -119,11 +127,10 @@ public class CreateInstance extends ContentPanel{
         delbtn.setTranslateX(-50d);
 
         isCursforgemodpack.setVisible(false);
+        setCenterH(isCursforgemodpack);
 
-        contentPane.getChildren().addAll(modLoader,fileID,projectID,name,savebtn,delbtn,isCursforgemodpack);
+        contentPane.getChildren().addAll(modLoader,fileID,projectID,name,savebtn,delbtn,isCursforgemodpack,modloaderversion);
     }
-
-
 
     private void retour(){
         Button back = new Button(Translate.getTranslate("btn.back"));
@@ -154,7 +161,7 @@ public class CreateInstance extends ContentPanel{
             panel.onShow();
         }
     }
-    private void refrech(ContentPanel panel){
+    /*private void refrech(ContentPanel panel){
         App.navContent.getChildren().clear();
         if (panel != null) {
             App.navContent.getChildren().add(panel.getLayout());
@@ -162,7 +169,7 @@ public class CreateInstance extends ContentPanel{
         panel.init(panelManager);
         panel.onShow();
         }
-    }
+    }*/
 
     private void InstanceField() {
         String latID = null;
@@ -195,6 +202,7 @@ public class CreateInstance extends ContentPanel{
         instance.setOnHidden(e -> {
             name.setVisible(false);
             modLoader.setVisible(false);
+            modloaderversion.setVisible(false);
             modLoader.setValue(Translate.getTranslate("instance.modloader.select"));
             projectID.setVisible(false);
             fileID.setVisible(false);
@@ -204,13 +212,12 @@ public class CreateInstance extends ContentPanel{
                 this.logger.info(instance.getValue());
                 name.setText("");
                 name.setVisible(true);
-                modLoader.setValue(Translate.getTranslate("instance.modloader.select"));
                 modLoader.setVisible(true);
-                modLoader.setDisable(false);
                 if (!Objects.equals(instance.getValue(),Translate.getTranslate("instance.selector.create"))){
                     name.setText(instance.getValue());
-                    modLoader.setDisable(true);
                     modLoader.setValue(InstanceData.getValue("type",instance.getValue()));
+                    modloaderversion.setText(InstanceData.getValue("",instance.getValue()));
+                    modloaderversion.setVisible(true);
                     delbtn.setVisible(true);
                     delbtn.setOnMouseClicked(em->{
                         JsonUtils.removeInstance(instance.getValue());
@@ -218,14 +225,12 @@ public class CreateInstance extends ContentPanel{
                     });
                 }
                 modLoader.setOnHidden(ex ->{
-                    /*if(Objects.equals(modLoader.getValue(),"CurseForge")){
-                        projectID.setText("");
-                        fileID.setText("");
-                        projectID.setVisible(true);
-                        fileID.setVisible(true);
-                    }*/
-                    savebtn.setVisible(true);
-                    isCursforgemodpack.setVisible(true);
+                    if (!Objects.equals(modLoader.getValue(), Translate.getTranslate("instance.modloader.select"))){
+                        savebtn.setVisible(true);
+                        isCursforgemodpack.setVisible(true);
+                        modloaderversion.setText("");
+                        modloaderversion.setVisible(true);
+                    }
                     isCursforgemodpack.setOnMouseClicked(cl->{
                         if(isCursforgemodpack.isSelected()){
                             projectID.setText("");
@@ -238,12 +243,18 @@ public class CreateInstance extends ContentPanel{
                         }
                     });
                     savebtn.setOnMouseClicked(ev->{
-                        if (!JsonUtils.isNameUsed(name.getText())){
-                            if(projectID.getText().matches("\\d+") && fileID.getText().matches("\\d+") ){
-                                JsonUtils.addInstance(name.getText(),modLoader.getValue(),"",projectID.getText(),fileID.getText());
+                        if (!JsonUtils.isNameUsed(name.getText()) && !Objects.equals(name.getText(), "" )){
+                            if(!isCursforgemodpack.isSelected()){
+                                System.out.println("test");
+                                JsonUtils.addInstance(name.getText(),modLoader.getValue(),modloaderversion.getText());
                                 refrech(new CreateInstance());
                             }else{
-                                Notification.sendSystemNotification(Translate.getTranslate("instance.save.curseforge.intError"), TrayIcon.MessageType.ERROR);
+                                if(projectID.getText().matches("\\d+") && fileID.getText().matches("\\d+")){
+                                    JsonUtils.addInstance(name.getText(),modLoader.getValue(),modloaderversion.getText(),projectID.getText(),fileID.getText());
+                                    refrech(new CreateInstance());
+                                }else{
+                                    Notification.sendSystemNotification(Translate.getTranslate("instance.save.curseforge.intError"), TrayIcon.MessageType.ERROR);
+                                }
                             }
                         }else{
                             Notification.sendSystemNotification(Translate.getTranslate("instance.save.general.nameUsed"), TrayIcon.MessageType.ERROR);
