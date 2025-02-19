@@ -28,7 +28,7 @@ public class Login extends Panel {
     PasswordField passwordField = new PasswordField();
     Label userErrorLabel = new Label();
     Button btnLogin = new Button(Translate.getTranslate("btn.login"));
-    CheckBox authModeChk = new CheckBox(Translate.getTranslate("account.user_type.offline"));
+    CheckBox authModeChk = new CheckBox(Translate.getTranslate("account.user.type.offline"));
     Button msLoginBtn = new Button();
 
     @Override
