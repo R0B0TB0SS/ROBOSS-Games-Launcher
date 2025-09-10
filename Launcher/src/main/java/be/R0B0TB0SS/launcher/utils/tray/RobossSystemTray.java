@@ -67,7 +67,7 @@ public class RobossSystemTray {
             JMenuItem siteItem = new JMenuItem(Translate.getTranslate("tray.website"));
             siteItem.addActionListener(e -> {
                 try {
-                    Desktop.getDesktop().browse((new URL("https://robossfactory.alwaysdata.net/")).toURI());
+                    Desktop.getDesktop().browse((new URL("https://www.robotboss.org/")).toURI());
                 } catch (Exception ex) {
                     log.error("e: ", ex);
                 }

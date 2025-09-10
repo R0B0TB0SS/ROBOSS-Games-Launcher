@@ -101,7 +101,7 @@ public class Launcher extends Application {
 
     public static void IsOnline() throws IOException{
 
-        URL url = new URL("http://www.google.com");
+        URL url = new URL("https://www.robotboss.org");
         HttpURLConnection urlConn = (HttpURLConnection)url.openConnection();
         urlConn.connect();
 

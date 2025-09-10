@@ -42,7 +42,7 @@ import static be.R0B0TB0SS.launcher.Launcher.IsOnline;
 
 public class RobossFactory extends ContentPanel {
     private final Saver saver = Launcher.getInstance().getSaver();
-    public static final String ROBOSS_FACTORY_DATA_URL = "https://robossfactory.alwaysdata.net/launcher_files/roboss_factory.json";
+    public static final String ROBOSS_FACTORY_DATA_URL = "https://www.robotboss.org/launcher_files/roboss_factory.json";
     public static String GAME_VERSION = null;
     public static String FORGE_VERSION = null;
     public static String PROJECT_ID = null;
