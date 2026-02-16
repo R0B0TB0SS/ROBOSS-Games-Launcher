@@ -91,20 +91,7 @@ public class Account extends  ContentPanel{
                 avatarView.setTranslateX(50d);
                 userPane.getChildren().add(avatarView);
             }else{
-                try{
-                    Launcher.IsOnline();
-                String avatarUrl = "https://mc-heads.net/body/" + Launcher.getInstance().getAuthInfos().getUuid() + ".png/96";
-                ImageView avatarView = new ImageView();
-                Image avatarImg = new Image(avatarUrl);
-                avatarView.setImage(avatarImg);
-                avatarView.setPreserveRatio(true);
-                avatarView.setFitHeight(userPane.getMaxHeight()*0.85);
-                setCenterV(avatarView);
-                setCanTakeAllSize(avatarView);
-                setLeft(avatarView);
-                avatarView.setTranslateX(50d);
-                userPane.getChildren().add(avatarView);
-            }catch (IOException e) {
+
                     if (saver.get("username") != null) {
 
                         String avatarUrl = Launcher.launcherDir.resolve("player_body.png").toUri().toString().toLowerCase(Locale.ROOT);
@@ -126,14 +113,13 @@ public class Account extends  ContentPanel{
                         Image avatarImg = new Image(avatarUrl);
                         avatarView.setImage(avatarImg);
                         avatarView.setPreserveRatio(true);
-                        avatarView.setFitHeight(userPane.getMaxHeight()*0.85);
+                        avatarView.setFitHeight(userPane.getMaxHeight() * 0.85);
                         setCenterV(avatarView);
                         setCanTakeAllSize(avatarView);
                         setLeft(avatarView);
                         avatarView.setTranslateX(50d);
                         userPane.getChildren().add(avatarView);
                     }
-                }
     }
 
             Label NameLabel = new Label(Translate.getTranslate("account.user"));

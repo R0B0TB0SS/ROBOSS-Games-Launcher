@@ -44,26 +44,19 @@ public class OsCheck {
     }
 
     public static void killJava() {
-        try {
-            if (getOperatingSystemType() == DistributionOS.WINDOWS) {
-                Runtime.getRuntime().exec("taskkill /f /im javaw.exe");
-            } else {
-                Runtime.getRuntime().exec("kill -9 java");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (getOperatingSystemType() == DistributionOS.WINDOWS) {
+            new ProcessBuilder("taskkill /f /im javaw.exe");
+        } else {
+            new ProcessBuilder("kill -9 java");
         }
     }
 
     public static void killJcefHelper() {
-        try {
-            if (getOperatingSystemType() == DistributionOS.WINDOWS) {
-                Runtime.getRuntime().exec("taskkill /f /im jcef_helper.exe");
-            } else {
-                Runtime.getRuntime().exec("kill -9 jcef_helper");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (getOperatingSystemType() == DistributionOS.WINDOWS) {
+
+            new ProcessBuilder("taskkill /f /im jcef_helper.exe");
+        } else {
+            new ProcessBuilder("kill -9 jcef_helper");
         }
     }
 }

@@ -11,11 +11,11 @@ public class BootstrapFrame extends JFrame {
         this.init();
         this.start();
     }
-    private Image load(String name) {
+    private Image load() {
         Image img = null;
 
         try {
-            img = Toolkit.getDefaultToolkit().createImage(this.getClass().getClassLoader().getResource(name));
+            img = Toolkit.getDefaultToolkit().createImage(this.getClass().getClassLoader().getResource("icon.png"));
         } catch (Exception var4) {
             var4.printStackTrace();
         }
@@ -25,7 +25,7 @@ public class BootstrapFrame extends JFrame {
 
     private void init() {
 
-        this.image = this.load("icon.png");
+        this.image = this.load();
         ImageIcon icon = new ImageIcon(image);
         this.setIconImage(icon.getImage());
 

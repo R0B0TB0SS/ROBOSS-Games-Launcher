@@ -14,11 +14,11 @@ public class RobossSystemTray {
 
     private static JPopupMenu trayMenu;
     private static Image image;
-    private static Image load(String name) {
+    private static Image load() {
         Image img = null;
 
         try {
-            img = Toolkit.getDefaultToolkit().createImage(RobossSystemTray.class.getClassLoader().getResource(name));
+            img = Toolkit.getDefaultToolkit().createImage(RobossSystemTray.class.getClassLoader().getResource("icon.png"));
         } catch (Exception var4) {
             var4.printStackTrace();
         }
@@ -28,7 +28,7 @@ public class RobossSystemTray {
 
     public static void create() {
         try {
-            image = load("icon.png");
+            image = load();
 
             ImageIcon icon = new ImageIcon(image);
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -61,7 +61,7 @@ public class RobossSystemTray {
             JMenuItem siteItem = new JMenuItem("Site");
             siteItem.addActionListener(e -> {
                 try {
-                    Desktop.getDesktop().browse((new URL("https://robossfactory.alwaysdata.net/")).toURI());
+                    Desktop.getDesktop().browse((new URL("https://www.robotboss.org/")).toURI());
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }

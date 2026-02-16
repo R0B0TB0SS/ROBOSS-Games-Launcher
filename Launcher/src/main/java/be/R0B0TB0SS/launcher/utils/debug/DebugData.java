@@ -48,7 +48,7 @@ public class DebugData {
             sdf1.applyPattern("dd/MM/yyyy HH:mm:ss:SS");
             Date date = sdf1.parse(strDate);
             this.date2 = sdf1.format(date);
-        }catch (Exception e){}
+        }catch (Exception ignored){}
 
         this.date = System.currentTimeMillis();
 
