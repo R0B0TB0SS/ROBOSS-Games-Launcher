@@ -25,7 +25,7 @@ public class JsonOnlineParser {
                 String responseLine;
                 while ((responseLine = br.readLine()) != null)
                     response.append(responseLine.trim());
-                return (new JsonParser()).parse(response.toString()).getAsJsonObject();
+                return JsonParser.parseString(response.toString()).getAsJsonObject();
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;

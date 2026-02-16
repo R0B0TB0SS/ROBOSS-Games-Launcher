@@ -8,7 +8,6 @@ import fr.theshark34.openlauncherlib.util.Saver;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
 
@@ -70,15 +69,26 @@ public class Translate {
         }
         return finalTranslate;
     }
-    public static ArrayList<Object> languageList(){
-        ArrayList<Object> res =new ArrayList<>();
-        InputStream inputStream = Translate.class.getClassLoader().getResourceAsStream("lang/lang.json");
-        JsonObject mainJsonObject = IOUtils.readJson(inputStream).getAsJsonObject();
-        JsonArray langArray = (JsonArray) mainJsonObject.get("lang");
-        for (Object o : langArray) {
-            JsonObject langlist = (JsonObject) o;
-            String arlang = String.valueOf(langlist.get("language")).split("\"")[1];
-            res.add(arlang);
+    public static ArrayList<Object> languageList() {
+        ArrayList<Object> res = new ArrayList<>();
+        try (InputStream inputStream = Translate.class.getClassLoader().getResourceAsStream("lang/lang.json")) {
+            // Check if the inputStream is null before attempting to read from it
+            if (inputStream == null) {
+                System.err.println("Error: lang/lang.json not found.");
+                return res; // Return an empty list or handle the error
+            }
+            JsonObject mainJsonObject = IOUtils.readJson(inputStream).getAsJsonObject();
+            JsonArray langArray = mainJsonObject.getAsJsonArray("lang");
+            if (langArray != null) {
+                for (Object o : langArray) {
+                    JsonObject langlist = (JsonObject) o;
+                    String arlang = String.valueOf(langlist.get("language")).split("\"")[1];
+                    res.add(arlang);
+                }
+            }
+        } catch (Exception e) {
+            // Log the exception to get more details on what went wrong
+            e.printStackTrace();
         }
         return res;
     }

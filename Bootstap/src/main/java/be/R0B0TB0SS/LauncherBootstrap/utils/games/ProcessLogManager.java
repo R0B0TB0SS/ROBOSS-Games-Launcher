@@ -5,7 +5,7 @@ import java.io.InputStreamReader;
 import java.util.function.Consumer;
 
 public class ProcessLogManager extends Thread {
-    private BufferedReader reader;
+    private final BufferedReader reader;
 
     private Consumer<String> callback;
 

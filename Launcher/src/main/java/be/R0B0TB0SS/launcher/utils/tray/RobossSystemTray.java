@@ -11,6 +11,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.net.URI;
 import java.net.URL;
 
 public class RobossSystemTray {
@@ -67,7 +68,7 @@ public class RobossSystemTray {
             JMenuItem siteItem = new JMenuItem(Translate.getTranslate("tray.website"));
             siteItem.addActionListener(e -> {
                 try {
-                    Desktop.getDesktop().browse((new URL("https://www.robotboss.org/")).toURI());
+                    Desktop.getDesktop().browse((new URI("https://www.robotboss.org/")));
                 } catch (Exception ex) {
                     log.error("e: ", ex);
                 }

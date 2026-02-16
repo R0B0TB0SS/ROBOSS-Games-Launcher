@@ -12,7 +12,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import java.io.IOException;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -170,22 +169,8 @@ public class App extends Panel {
             setCenterH(avatarView);
             accBtn = new Button("");
             accBtn.setGraphic(avatarView);
-        }else{try{
-            Launcher.IsOnline();
-            String avatarUrl = "https://mc-heads.net/head/" + Launcher.getInstance().getAuthInfos().getUuid() + ".png/64";
-            ImageView avatarView = new ImageView();
-            Image avatarImg = new Image(avatarUrl);
-            avatarView.setImage(avatarImg);
-            avatarView.setPreserveRatio(true);
-            avatarView.setFitHeight(70d);
-            setCenterV(avatarView);
-            setCanTakeAllSize(avatarView);
-            setCenterH(avatarView);
-            accBtn = new Button("");
-            accBtn.setGraphic(avatarView);
-        }catch (IOException e) {
+        }else{
             if(saver.get("username")!= null){
-                try{
 
                 String avatarUrl = Launcher.launcherDir.resolve("player_head.png").toUri().toString().toLowerCase(Locale.ROOT);
                 ImageView avatarView = new ImageView();
@@ -198,20 +183,6 @@ public class App extends Panel {
                 setCenterH(avatarView);
                 accBtn = new Button("");
                 accBtn.setGraphic(avatarView);
-
-                }catch (Exception ed){
-                    String avatarUrl = "images/steve_head.png";
-                    ImageView avatarView = new ImageView();
-                    Image avatarImg = new Image(avatarUrl);
-                    avatarView.setImage(avatarImg);
-                    avatarView.setPreserveRatio(true);
-                    avatarView.setFitHeight(70d);
-                    setCenterV(avatarView);
-                    setCanTakeAllSize(avatarView);
-                    setCenterH(avatarView);
-                    accBtn = new Button("");
-                    accBtn.setGraphic(avatarView);
-                }
             }else{
             String avatarUrl = "images/steve_head.png";
             ImageView avatarView = new ImageView();
@@ -224,7 +195,7 @@ public class App extends Panel {
             setCenterH(avatarView);
             accBtn = new Button("");
             accBtn.setGraphic(avatarView);}
-        }
+
         }
 
         accBtn.getStyleClass().add("sidemenu-nav-btn");

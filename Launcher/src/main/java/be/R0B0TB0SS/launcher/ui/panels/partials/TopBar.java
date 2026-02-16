@@ -12,7 +12,6 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 
 public class TopBar extends Panel {
-    private GridPane topBar;
     @Override
     public String getStylesheetPath() {
         return null;
@@ -26,9 +25,9 @@ public class TopBar extends Panel {
     @Override
     public void init(PanelManager panelManager) {
         super.init(panelManager);
-        this.topBar = this.layout;
+        GridPane topBar = this.layout;
         this.layout.setStyle("-fx-background-color: rgb(35, 40, 40);");
-        setCanTakeAllWidth(this.topBar);
+        setCanTakeAllWidth(topBar);
 
 
         // TopBar: center

@@ -29,29 +29,37 @@ import javafx.stage.Stage;
 
 public class Launcher extends Application {
 
-    public static String VERSION = "1.1.1";
+    public static String VERSION = "1.1.3";
     private static Launcher instance;
     private final ILogger logger;
     public static final Path launcherDir = GameDirGenerator.createGameDir("robossgames", true);
     private final Saver saver;
     private AuthInfos authInfos = null;
 
-    public static void downloadFile(String imageUrl, String destinationFile){
-        URL url;
+    public static void downloadFile(String imageUrl, String destinationFile) {
         try {
-            url = new URL(imageUrl);
-            Launcher.getInstance().getLogger().info("Download: " + url);
-            InputStream is = url.openStream();
-            OutputStream os = new FileOutputStream(destinationFile);
+            URL url = new URL(imageUrl);
+            HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
+            httpConn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3");
 
-            byte[] b = new byte[2048];
-            int length;
+            int responseCode = httpConn.getResponseCode();
 
-            while ((length = is.read(b)) != -1) {
-                os.write(b, 0, length);
+            // Check for 200 OK response
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                try (BufferedInputStream bis = new BufferedInputStream(httpConn.getInputStream());
+                     FileOutputStream fos = new FileOutputStream(destinationFile)) {
+
+                    byte[] buffer = new byte[1024];
+                    int count;
+                    while ((count = bis.read(buffer, 0, 1024)) != -1) {
+                        fos.write(buffer, 0, count);
+                    }
+                }
+            } else {
+                // Handle HTTP error codes
+                Launcher.getInstance().getLogger().err("HTTP Error: " + responseCode + " - " + httpConn.getResponseMessage());
             }
-            is.close();
-            os.close();
+            httpConn.disconnect();
         } catch (IOException e) {
             Launcher.getInstance().getLogger().err(e.toString());
         }
@@ -99,12 +107,12 @@ public class Launcher extends Application {
     }
 
 
-    public static void IsOnline() throws IOException{
-
+    public static void IsOnline() throws IOException {
         URL url = new URL("https://www.robotboss.org");
-        HttpURLConnection urlConn = (HttpURLConnection)url.openConnection();
+        HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+        urlConn.setConnectTimeout(5000); // Added timeout so it doesn't hang forever
         urlConn.connect();
-
+        urlConn.disconnect(); // Always disconnect to free resources
     }
     public boolean isUserAlreadyLoggedIn() {
         if (saver.get("msAccessToken") != null && saver.get("msRefreshToken") != null) {
