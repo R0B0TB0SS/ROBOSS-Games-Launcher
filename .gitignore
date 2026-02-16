@@ -125,3 +125,5 @@ Launcher/.gradle/8.5/checksums/sha1-checksums.bin
 Launcher/.gradle/8.5/dependencies-accessors/dependencies-accessors.lock
 Bootstap/.gradle/8.5/fileHashes/fileHashes.lock
 Bootstap/.gradle/8.5/fileHashes/resourceHashesCache.bin
+Bootstap/out/artifacts/LauncherBootstap_jar/ROBOSS Games Launcher Setup.exe
+Bootstap/.gradle/8.5/gc.properties
