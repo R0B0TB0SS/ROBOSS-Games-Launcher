@@ -2,6 +2,8 @@ package be.R0B0TB0SS.launcher.ui.panels.pages.content;
 
 import be.R0B0TB0SS.launcher.Launcher;
 import be.R0B0TB0SS.launcher.ui.PanelManager;
+import be.R0B0TB0SS.launcher.utils.StepInfo;
+import be.R0B0TB0SS.launcher.utils.deleter.DeleterUtils;
 import be.R0B0TB0SS.launcher.utils.translate.Translate;
 import com.google.gson.JsonObject;
 import fr.flowarg.flowupdater.FlowUpdater;
@@ -9,11 +11,12 @@ import fr.flowarg.flowupdater.download.DownloadList;
 import fr.flowarg.flowupdater.download.IProgressCallback;
 import fr.flowarg.flowupdater.download.Step;
 import fr.flowarg.flowupdater.download.json.CurseModPackInfo;
+import fr.flowarg.flowupdater.download.json.ExternalFile;
 import fr.flowarg.flowupdater.utils.IOUtils;
 import fr.flowarg.flowupdater.utils.ModFileDeleter;
 import fr.flowarg.flowupdater.versions.VanillaVersion;
-import fr.flowarg.flowupdater.versions.forge.ForgeVersion;
-import fr.flowarg.flowupdater.versions.forge.ForgeVersionBuilder;
+import fr.flowarg.flowupdater.versions.neoforge.NeoForgeVersion;
+import fr.flowarg.flowupdater.versions.neoforge.NeoForgeVersionBuilder;
 import fr.flowarg.materialdesignfontfx.MaterialDesignIcon;
 import fr.flowarg.materialdesignfontfx.MaterialDesignIconView;
 import fr.flowarg.openlauncherlib.NoFramework;
@@ -35,20 +38,23 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.Objects;
 
 import static be.R0B0TB0SS.launcher.Launcher.IsOnline;
 
 
-public class RobossFactory extends ContentPanel {
+public class Modded extends ContentPanel {
+    private static final List<String> WHITELIST_FILES = new java.util.ArrayList<>();
+    private static final List<String> BLACKLIST_FILES = new java.util.ArrayList<>();
     private final Saver saver = Launcher.getInstance().getSaver();
-    public static final String ROBOSS_FACTORY_DATA_URL = "https://www.robotboss.org/launcher_files/roboss_factory.json";
-    public static String GAME_VERSION = null;
-    public static String FORGE_VERSION = null;
-    public static String PROJECT_ID = null;
-    public static String FILE_ID = null;
-    public static String EXT_REQ = String.valueOf(true);
-    private static final Path instancedir = Path.of(Launcher.getInstance().getLauncherDir() + "/versions/robossfactory1");
+    private static final String DATA_URL = "https://cdn.robotboss.org/launcher_files/modded.json";
+    private static String GAME_VERSION = null;
+    private static String MODDED_VER = null;
+    private static String PROJECT_ID = null;
+    private static String FILE_ID = null;
+    private static Boolean EXT_REQ = true;
+    private static final Path instancedir = Path.of(Launcher.getInstance().getLauncherDir() + "/modded");
 
     GridPane boxPane = new GridPane();
     ProgressBar progressBar = new ProgressBar();
@@ -94,33 +100,35 @@ public class RobossFactory extends ContentPanel {
         NameLabem();
         try {
             IsOnline();
-            JsonObject object = IOUtils.readJson(new URL(ROBOSS_FACTORY_DATA_URL)).getAsJsonObject();
+            JsonObject object = IOUtils.readJson(new URL(DATA_URL)).getAsJsonObject();
             JsonObject version = (JsonObject) object.get("version");
-            saver.set("rf1-mc-version", String.valueOf(version.get("minecraft")).split("\"")[1]);
-            saver.set("rf1-forge-version", String.valueOf(version.get("forge")).split("\"")[1]);
-            saver.set("project_id",String.valueOf(version.get("project_id")).split("\"")[1]);
-            saver.set("file_id",String.valueOf(version.get("file_id")).split("\"")[1]);
-            saver.set("ext_req",String.valueOf(version.get("ext_req")).split("\"")[1]);
+            GAME_VERSION = String.valueOf(version.get("minecraft")).split("\"")[1];
+            MODDED_VER = String.valueOf(version.get("modded_ver")).split("\"")[1];
+            PROJECT_ID = String.valueOf(version.get("project_id")).split("\"")[1];
+            FILE_ID=String.valueOf(version.get("file_id")).split("\"")[1];
+            if (object.has("whitelist")) {
+                object.getAsJsonArray("whitelist").forEach(element ->
+                        WHITELIST_FILES.add(element.getAsString()));
+            }
+            if (object.has("blacklist")) {
+                object.getAsJsonArray("blacklist").forEach(element ->
+                        BLACKLIST_FILES.add(element.getAsString()));
+            }
 
         }catch (Exception ee){
-            logger.err("No internet");
+            logger.err("No internet....");
         }
-
-        GAME_VERSION = saver.get("rf1-mc-version");
-        FORGE_VERSION = saver.get("rf1-forge-version");
-        PROJECT_ID = saver.get("project_id");
-        FILE_ID= saver.get("file_id");
-        EXT_REQ = saver.get("ext_req");
         this.showPlayButton();
     }
     private void NameLabem(){
-        Label roboss = new Label("ROBOSS Factory I");
+        Label roboss = new Label("Modded");
         roboss.setFont(Font.font("Consolas", FontWeight.BOLD, FontPosture.REGULAR, 18f));
         roboss.setStyle("-fx-text-fill: white;");
         setLeft(roboss);
         roboss.setTranslateX(20);
         this.boxPane.getChildren().add(roboss);
     }
+
 
     private void showPlayButton() {
         this.boxPane.getChildren().clear();
@@ -164,47 +172,57 @@ public class RobossFactory extends ContentPanel {
             public void step(Step step) {
                 Platform.runLater(() -> {
                     this.stepTxt = StepInfo.valueOf(step.name()).getDetails();
-                    RobossFactory.this.setStatus(String.format("%s (%s)", this.stepTxt, this.percentTxt));
+                    Modded.this.setStatus(String.format("%s (%s)", this.stepTxt, this.percentTxt));
                 });
             }
 
             public void update(DownloadList.DownloadInfo info) {
                 Platform.runLater(() -> {
                     this.percentTxt = this.decimalFormat.format((double)info.getDownloadedBytes() * 100.0 / (double)info.getTotalToDownloadBytes()) + "%";
-                    RobossFactory.this.setStatus(String.format("%s (%s)", this.stepTxt, this.percentTxt));
-                    RobossFactory.this.setProgress(info.getDownloadedBytes(), info.getTotalToDownloadBytes());
+                    Modded.this.setStatus(String.format("%s (%s)", this.stepTxt, this.percentTxt));
+                    Modded.this.setProgress(info.getDownloadedBytes(), info.getTotalToDownloadBytes());
                 });
             }
 
             public void onFileDownloaded(Path path) {
                 Platform.runLater(() -> {
                     String p = path.toString();
-                    RobossFactory.this.fileLabel.setText("..." + p.replace(instancedir.toFile().getAbsolutePath(), ""));
+                    Modded.this.fileLabel.setText("..." + p.replace(instancedir.toFile().getAbsolutePath(), ""));
                 });
             }
         };
         try {
+
+                DeleterUtils.backupWhitelist(instancedir, WHITELIST_FILES, this.logger);
+
                 VanillaVersion vanillaVersion = new
                         VanillaVersion.VanillaVersionBuilder()
                         .withName(GAME_VERSION)
                         .build();
 
-            CurseModPackInfo cursemodpack = new CurseModPackInfo(Integer.parseInt(PROJECT_ID), Integer.parseInt(FILE_ID), Boolean.parseBoolean(EXT_REQ));
-
-                ForgeVersion forge = new ForgeVersionBuilder()
-                        .withForgeVersion(FORGE_VERSION)
-                        .withFileDeleter(new ModFileDeleter(true))
+            CurseModPackInfo cursemodpack = new CurseModPackInfo(Integer.parseInt(PROJECT_ID), Integer.parseInt(FILE_ID), EXT_REQ);
+            List<ExternalFile> exFiles = ExternalFile.getExternalFilesFromJson("https://cdn.robotboss.org/launcher_files/modded/exFiles.php");
+                NeoForgeVersion neoforge = new NeoForgeVersionBuilder()
+                        .withNeoForgeVersion(MODDED_VER)
                         .withCurseModPack(cursemodpack)
+                        .withFileDeleter(new ModFileDeleter())
                         .build();
 
                 FlowUpdater updater = new FlowUpdater.FlowUpdaterBuilder()
                         .withVanillaVersion(vanillaVersion)
-                        .withModLoaderVersion(forge)
+                        .withModLoaderVersion(neoforge)
                         .withLogger(Launcher.getInstance().getLogger())
                         .withProgressCallback(callback)
+                        .withExternalFiles(exFiles)
                         .build();
 
                 updater.update(instancedir);
+
+
+                DeleterUtils.restoreWhitelist(instancedir, WHITELIST_FILES, this.logger);
+                DeleterUtils.cleanupBlacklistedFiles(instancedir,BLACKLIST_FILES,this.logger);
+                
+                
                 this.startGame(updater.getVanillaVersion().getName());
 
 
@@ -221,7 +239,7 @@ public class RobossFactory extends ContentPanel {
             this.logger.info("Launching Minecraft");
             NoFramework noFramework = new NoFramework(instancedir, Launcher.getInstance().getAuthInfos(), GameFolder.FLOW_UPDATER);
             noFramework.getAdditionalVmArgs().add(this.getRamArgsFromSaver());
-            Process p = noFramework.launch(gameVersion, FORGE_VERSION.split("-")[1], NoFramework.ModLoader.FORGE);
+            Process p = noFramework.launch(gameVersion, MODDED_VER, NoFramework.ModLoader.NEO_FORGE);
 
             if (Objects.equals(saver.get("closeAfterLaunch"), "true")) {
                 System.exit(0);
@@ -231,7 +249,7 @@ public class RobossFactory extends ContentPanel {
                 try {
                     p.waitFor();
                     Platform.runLater(() -> this.panelManager.getStage().show());
-                    this.logger.info("Here am I !!");
+                    this.logger.info("Here am I !");
                     this.showPlayButton();
                     this.isDownloading = false;
                 }
@@ -248,7 +266,7 @@ public class RobossFactory extends ContentPanel {
     }
 
     public String getRamArgsFromSaver() {
-        int val = 2048;
+        int val = 8192;
         try {
             if (this.saver.get("maxRam") == null) {
                 throw new NumberFormatException();
@@ -274,29 +292,4 @@ public class RobossFactory extends ContentPanel {
         return this.isDownloading;
     }
 
-    public enum StepInfo {
-        READ(Translate.getTranslate("step.read")),
-        DL_LIBS(Translate.getTranslate("step.dl_libs")),
-        DL_ASSETS(Translate.getTranslate("step.dl_assets")),
-        EXTRACT_NATIVES(Translate.getTranslate("step.extract_natives")),
-        FORGE(Translate.getTranslate("step.forge")),
-        FABRIC(Translate.getTranslate("step.fabric")),
-        MODS(Translate.getTranslate("step.mods")),
-        EXTERNAL_FILES(Translate.getTranslate("step.external_files")),
-        POST_EXECUTIONS(Translate.getTranslate("step.post_executions")),
-        MOD_LOADER(Translate.getTranslate("step.mod_loader")),
-        INTEGRATION(Translate.getTranslate("step.mods.integration")),
-        MOD_PACK(Translate.getTranslate("step.mod_pack")),
-        END(Translate.getTranslate("step.end"));
-
-        final String details;
-
-        StepInfo(String details) {
-            this.details = details;
-        }
-
-        public String getDetails() {
-            return this.details;
-        }
-    }
 }

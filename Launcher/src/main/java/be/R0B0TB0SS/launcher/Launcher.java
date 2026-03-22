@@ -1,8 +1,8 @@
 package be.R0B0TB0SS.launcher;
 
-import be.R0B0TB0SS.launcher.authentification.MicrosoftAuthResult;
-import be.R0B0TB0SS.launcher.authentification.MicrosoftAuthenticationException;
-import be.R0B0TB0SS.launcher.authentification.MicrosoftAuthenticator;
+import be.R0B0TB0SS.launcher.utils.authentification.MicrosoftAuthResult;
+import be.R0B0TB0SS.launcher.utils.authentification.MicrosoftAuthenticationException;
+import be.R0B0TB0SS.launcher.utils.authentification.MicrosoftAuthenticator;
 import be.R0B0TB0SS.launcher.ui.PanelManager;
 import be.R0B0TB0SS.launcher.ui.panels.pages.App;
 import be.R0B0TB0SS.launcher.ui.panels.pages.Login;
@@ -107,13 +107,14 @@ public class Launcher extends Application {
     }
 
 
-    public static void IsOnline() throws IOException {
-        URL url = new URL("https://www.robotboss.org");
-        HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
-        urlConn.setConnectTimeout(5000); // Added timeout so it doesn't hang forever
+    public static void IsOnline() throws IOException{
+
+        URL url = new URL("https://www.google.com");
+        HttpURLConnection urlConn = (HttpURLConnection)url.openConnection();
         urlConn.connect();
-        urlConn.disconnect(); // Always disconnect to free resources
+
     }
+
     public boolean isUserAlreadyLoggedIn() {
         if (saver.get("msAccessToken") != null && saver.get("msRefreshToken") != null) {
             try {

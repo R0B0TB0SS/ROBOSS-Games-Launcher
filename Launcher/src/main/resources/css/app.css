@@ -3,11 +3,11 @@
 }
 
 .sidemenu {
-    -fx-background-color: rgb(70,70,70);
-}
-
-.test-title{
--fx-text-fill:black;
+    /* Dégradé métallique sombre */
+    -fx-background-color: linear-gradient(to right, #2a2a2a 0%, #3a3a3a 50%, #2a2a2a 100%);
+    -fx-border-color: transparent #151515 transparent transparent;
+    -fx-border-width: 2px;
+    -fx-padding: 15px 10px;
 }
 
 .home-title {
@@ -15,12 +15,11 @@
 }
 
 .sidemenu-nav-btn {
-    -fx-background-color:rgb(40,40,40);
-    -fx-text-alignment: center;
-    -fx-min-height: 80px;
-    -fx-max-height: 80px;
-    -fx-max-width: 80px;
-    -fx-background-radius: 20px;
+    -fx-background-color: linear-gradient(to bottom, #444, #333);
+    -fx-background-radius: 8px; /* Moins arrondi pour un look plus "pro" */
+    -fx-border-color: #222;
+    -fx-border-radius: 8px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 5, 0, 0, 2);
 }
 
 .sidemenu-nav-btn:hover {
@@ -28,7 +27,9 @@
 }
 
 .sidemenu-nav-btn.active {
-    -fx-background-color: #ad0000;
+    /* Le rouge devient un dégradé pour éviter l'aspect "plastique" */
+    -fx-background-color: linear-gradient(to bottom, #c0392b, #8e1e1a);
+    -fx-border-color: #5e110f;
 }
 .sidemenu-nav-btn.active:hover {
     -fx-background-color: #860000;

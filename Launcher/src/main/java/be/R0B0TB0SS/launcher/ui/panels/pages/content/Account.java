@@ -210,7 +210,7 @@ public class Account extends  ContentPanel{
             logoutBtn.setTranslateX(-40d);
             logoutBtn.setOnMouseClicked(e -> {
 
-                if (currentPage instanceof RobossFactory && ((RobossFactory) currentPage).isDownloading()) {
+                if (currentPage instanceof Modded && ((Modded) currentPage).isDownloading()) {
                     return;
                 }
 

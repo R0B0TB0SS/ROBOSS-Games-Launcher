@@ -1,4 +1,4 @@
-package be.R0B0TB0SS.launcher.authentification;
+package be.R0B0TB0SS.launcher.utils.authentification;
 
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;

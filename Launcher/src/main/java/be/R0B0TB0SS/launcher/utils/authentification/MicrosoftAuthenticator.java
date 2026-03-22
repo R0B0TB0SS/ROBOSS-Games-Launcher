@@ -1,15 +1,14 @@
-package be.R0B0TB0SS.launcher.authentification;
+package be.R0B0TB0SS.launcher.utils.authentification;
 
-import be.R0B0TB0SS.launcher.authentification.model.request.MinecraftLoginRequest;
-import be.R0B0TB0SS.launcher.authentification.model.request.XSTSAuthorizationProperties;
-import be.R0B0TB0SS.launcher.authentification.model.request.XboxLiveLoginProperties;
-import be.R0B0TB0SS.launcher.authentification.model.request.XboxLoginRequest;
-import be.R0B0TB0SS.launcher.authentification.model.response.*;
+import be.R0B0TB0SS.launcher.utils.authentification.model.request.MinecraftLoginRequest;
+import be.R0B0TB0SS.launcher.utils.authentification.model.request.XSTSAuthorizationProperties;
+import be.R0B0TB0SS.launcher.utils.authentification.model.request.XboxLiveLoginProperties;
+import be.R0B0TB0SS.launcher.utils.authentification.model.request.XboxLoginRequest;
+import be.R0B0TB0SS.launcher.utils.authentification.model.response.*;
 
 
 import java.io.UnsupportedEncodingException;
 import java.net.*;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;

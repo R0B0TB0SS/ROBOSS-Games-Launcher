@@ -3,7 +3,7 @@ package be.R0B0TB0SS.launcher.ui.panels.pages;
 import be.R0B0TB0SS.launcher.Launcher;
 import be.R0B0TB0SS.launcher.ui.PanelManager;
 import be.R0B0TB0SS.launcher.ui.panel.Panel;
-import be.R0B0TB0SS.launcher.authentification.MicrosoftAuthenticator;
+import be.R0B0TB0SS.launcher.utils.authentification.MicrosoftAuthenticator;
 import be.R0B0TB0SS.launcher.utils.translate.Translate;
 import fr.theshark34.openlauncherlib.minecraft.AuthInfos;
 import fr.theshark34.openlauncherlib.util.Saver;
@@ -71,47 +71,47 @@ public class Login extends Panel {
         /*
          * Login sidebar
          */
-        String icoimurl = "images/icon.png";
-        ImageView icoimView = new ImageView();
-        Image icoimImg = new Image(icoimurl);
-        icoimView.setImage(icoimImg);
-        icoimView.setPreserveRatio(true);
-        icoimView.setFitHeight(250d);
-        setCanTakeAllSize(icoimView);
-        setLeft(icoimView);
-        setTop(icoimView);
-        icoimView.setTranslateY(20d);
-        setCenterH(icoimView);
-        loginCard.getChildren().add(icoimView);
+        String icoImUrl = "images/icon.png";
+        ImageView icoImView = new ImageView();
+        Image icoImImg = new Image(icoImUrl);
+        icoImView.setImage(icoImImg);
+        icoImView.setPreserveRatio(true);
+        icoImView.setFitHeight(250d);
+        setCanTakeAllSize(icoImView);
+        setLeft(icoImView);
+        setTop(icoImView);
+        icoImView.setTranslateY(20d);
+        setCenterH(icoImView);
+        loginCard.getChildren().add(icoImView);
 
 
-        Label logtext = new Label("Version: V"+ Launcher.VERSION);
-        logtext.getStyleClass().add("login-text-labels");
-        setRight(logtext);
-        setCanTakeAllSize(logtext);
-        setBottom(logtext);
-        logtext.setTextAlignment(TextAlignment.RIGHT);
-        logtext.setTranslateX(25d);
-        logtext.setTranslateY(25d);
+        Label logText = new Label("Version: V"+ Launcher.VERSION);
+        logText.getStyleClass().add("login-text-labels");
+        setRight(logText);
+        setCanTakeAllSize(logText);
+        setBottom(logText);
+        logText.setTextAlignment(TextAlignment.RIGHT);
+        logText.setTranslateX(25d);
+        logText.setTranslateY(25d);
 
-        logtext.setVisible(false);
-        loginCard.getChildren().add(logtext);
-
-
+        logText.setVisible(false);
+        loginCard.getChildren().add(logText);
 
 
-        String logoimurl = "images/logo.png";
-        ImageView logoimView = new ImageView();
-        Image logoimImg = new Image(logoimurl);
-        logoimView.setImage(logoimImg);
-        logoimView.setPreserveRatio(true);
-        logoimView.setFitWidth(250d);
-        setCanTakeAllSize(logoimView);
-        setLeft(logoimView);
-        setTop(logoimView);
-        logoimView.setTranslateY(260d);
-        setCenterH(logoimView);
-        loginCard.getChildren().add(logoimView);
+
+
+        String logoImUrl = "images/logo.png";
+        ImageView logoImView = new ImageView();
+        Image logoImImg = new Image(logoImUrl);
+        logoImView.setImage(logoImImg);
+        logoImView.setPreserveRatio(true);
+        logoImView.setFitWidth(250d);
+        setCanTakeAllSize(logoImView);
+        setLeft(logoImView);
+        setTop(logoImView);
+        logoImView.setTranslateY(260d);
+        setCenterH(logoImView);
+        loginCard.getChildren().add(logoImView);
 
         // Username
         userField.setVisible(false);
@@ -190,7 +190,7 @@ public class Login extends Panel {
         msLoginBtn.setGraphic(view);
         msLoginBtn.setOnMouseClicked(e -> {
             this.authenticateMS();
-            logtext.setVisible(true);
+            logText.setVisible(true);
         });
 
         loginCard.getChildren().addAll(userField, userErrorLabel, authModeChk, btnLogin, msLoginBtn);

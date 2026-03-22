@@ -10,6 +10,7 @@
   "btn.delete":"Supprimer",
   "btn.createInstance":"Gérer les instances",
   "btn.back": "Retour",
+  "btn.of": "Ouvrir le dossier de launcher",
   "setting.pagename":"Paramètre",
   "setting.ram":"Mémoire max (Go)",
   "setting.pref":"Action du launcher aprés ouverture du jeu:",
