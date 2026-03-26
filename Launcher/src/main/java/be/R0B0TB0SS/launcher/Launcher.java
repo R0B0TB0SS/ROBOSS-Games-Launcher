@@ -1,5 +1,6 @@
 package be.R0B0TB0SS.launcher;
 
+import be.R0B0TB0SS.launcher.utils.account.MgAccount;
 import be.R0B0TB0SS.launcher.utils.authentification.MicrosoftAuthResult;
 import be.R0B0TB0SS.launcher.utils.authentification.MicrosoftAuthenticationException;
 import be.R0B0TB0SS.launcher.utils.authentification.MicrosoftAuthenticator;
@@ -17,11 +18,14 @@ import fr.theshark34.openlauncherlib.util.Saver;
 
 import java.awt.*;
 import java.io.*;
+import java.lang.management.ManagementFactory;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -32,9 +36,9 @@ import javafx.stage.Stage;
 
 public class Launcher extends Application {
 
-    public static String VERSION = "1.1.5";
+    public static String VERSION = "1.1.6";
     private static Launcher instance;
-    private final ILogger logger;
+    private static ILogger logger = null;
     public static final Path launcherDir = GameDirGenerator.createGameDir("robossgames", true);
     private final Saver saver;
     private AuthInfos authInfos = null;
@@ -94,6 +98,12 @@ public class Launcher extends Application {
         this.logger.info("Starting");
         this.logger.info("Version: V"+VERSION);
        Translate.languageList();
+        MgAccount.createAccountFile();
+        if(!MgAccount.hasAccount(saver.get("username")) && saver.get("username") != null) {
+            MgAccount.addAccount(saver.get("username"),saver.get("UUID"),saver.get("msAccessToken"),saver.get("msRefreshToken"));
+        }else if (!MgAccount.hasAccount(saver.get("offline-username")) && saver.get("offline-username") != null) {
+            MgAccount.addAccount(saver.get("offline-username"));
+        }
         PanelManager panelManager = new PanelManager(this, stage);
         panelManager.init();
         panelManager.start();
@@ -128,6 +138,7 @@ public class Launcher extends Application {
 
                     saver.set("msAccessToken", response.getAccessToken());
                     saver.set("msRefreshToken", response.getRefreshToken());
+                    saver.set("acc_type","online");
                     saver.save();
                     this.setAuthInfos(new AuthInfos(
                             response.getProfile().getName(),
@@ -146,6 +157,7 @@ public class Launcher extends Application {
                 this.saver.remove("msAccessToken");
                 this.saver.remove("msRefreshToken");
                 this.saver.remove("username");
+                saver.remove("acc_type");
                 this.saver.save();
 
                 Path path = Paths.get(launcherDir.resolve("player_head.png").toString());
@@ -158,7 +170,7 @@ public class Launcher extends Application {
                 }
                 catch (IOException ek) {
                     Launcher.getInstance().getLogger().err(ek.toString());
-                    
+
                 }
 
                 return false;
@@ -202,4 +214,37 @@ public class Launcher extends Application {
         System.exit(0);
     }
 
+    public static void restart() {
+        try {
+            // 1. Préparer la commande de redémarrage
+            List<String> command = new ArrayList<>();
+
+            // On récupère le chemin de l'exécutable java (java.exe)
+            command.add(System.getProperty("java.home") + "/bin/java");
+
+            // On récupère les arguments passés à la JVM (mémoire, modules, etc.)
+            command.addAll(java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments());
+
+            // On récupère le "classpath" ou le "module-path"
+            command.add("-cp");
+            command.add(System.getProperty("java.class.path"));
+
+            // On récupère la classe principale (Main)
+            // Note : System.getProperty("sun.java.command") peut contenir des arguments,
+            // on ne prend que le premier mot qui est la classe de lancement.
+            String mainClass = System.getProperty("sun.java.command").split(" ")[0];
+            command.add(mainClass);
+
+            // 2. Lancer le nouveau processus sans bloquer le thread actuel
+            new ProcessBuilder(command).inheritIO().start();
+
+            // 3. Fermer l'instance actuelle proprement
+            Platform.exit();
+            System.exit(0);
+
+        } catch (Exception e) {
+            System.err.println("Erreur lors du redémarrage : " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 }

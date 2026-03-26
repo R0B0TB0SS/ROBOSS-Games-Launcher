@@ -1,5 +1,6 @@
 {
   "account.pagename":"Account",
+  "account.add":"Add account",
   "account.user":"User:",
   "account.user.type":"Account type:",
   "account.user.type.no_connection":"No connection",

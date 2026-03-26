@@ -1,5 +1,6 @@
 {
   "account.pagename":"Compte",
+  "account.add":"Ajouter un compte",
   "account.user":"Utilisateur:",
   "account.user.type":"Type de compte:",
   "account.user.type.no_connection":"Pas d'internet",
