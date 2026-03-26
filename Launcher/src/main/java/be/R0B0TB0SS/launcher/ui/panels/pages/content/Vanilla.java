@@ -3,6 +3,7 @@ package be.R0B0TB0SS.launcher.ui.panels.pages.content;
 import be.R0B0TB0SS.launcher.Launcher;
 import be.R0B0TB0SS.launcher.ui.PanelManager;
 import be.R0B0TB0SS.launcher.utils.StepInfo;
+import be.R0B0TB0SS.launcher.utils.desktop.Notification;
 import be.R0B0TB0SS.launcher.utils.translate.Translate;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -21,12 +22,15 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 
+import java.awt.*;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Path;
@@ -98,7 +102,7 @@ public class Vanilla extends ContentPanel {
         setCenterH(authModeChk);
         authModeChk.getStyleClass().add("login-mode-chk");
         authModeChk.setMaxWidth(300);
-        authModeChk.setTranslateX(210d);
+        authModeChk.setTranslateX(300d);
         authModeChk.setSelected(Objects.equals(saver.get("ShowSnapshot"), "true"));
         authModeChk.selectedProperty().addListener((e, old, newValue) -> {
                 if(Objects.equals(saver.get("ShowSnapshot"), "false")) {
@@ -143,11 +147,11 @@ public class Vanilla extends ContentPanel {
         version.setVisible(true);
         setCanTakeAllSize(version);
         setCenterV(version);
-        version.setTranslateX(-160);
+        version.setTranslateX(-220);
         setCenterH(version);
         if(this.saver.get("curVer") != null){version.setValue(this.saver.get("curVer"));}else{
         version.setValue(Translate.getTranslate("vanilla.latest_release"));}
-        version.setMaxWidth(180);
+        version.setMaxWidth(150);
         version.setTranslateY(0d);
         version.getStyleClass().add("version-combobox");
 
@@ -189,13 +193,15 @@ public class Vanilla extends ContentPanel {
     }
 
     private void NameLabem(){
-        Label roboss = new Label("Vanilla");
-        roboss.setFont(Font.font("Consolas", FontWeight.BOLD, FontPosture.REGULAR, 18f));
-        roboss.setStyle("-fx-text-fill: white;");
-        setLeft(roboss);
-        roboss.setTranslateX(20);
-        this.boxPane.getChildren().add(roboss);
+        Label name = new Label("Vanilla");
+        name.setFont(Font.font("Consolas", FontWeight.BOLD, FontPosture.REGULAR, 18f));
+        name.setStyle("-fx-text-fill: white;");
+        setLeft(name);
+        name.setTranslateX(20);
+        name.setTranslateY(5);
+        this.boxPane.getChildren().add(name);
     }
+
 
     private void showPlayButton() {
         this.boxPane.getChildren().clear();
@@ -205,6 +211,7 @@ public class Vanilla extends ContentPanel {
         this.setCanTakeAllSize(playBtn);
         this.setCenterH(playBtn);
         this.setCenterV(playBtn);
+        playBtn.setTranslateY(10);
         playBtn.getStyleClass().add("play-btn");
         playBtn.setGraphic(playIcon);
         playBtn.setOnMouseClicked(e -> this.play());
@@ -289,7 +296,10 @@ public class Vanilla extends ContentPanel {
         }
         catch (Exception e) {
             Launcher.getInstance().getLogger().printStackTrace(e);
-
+            Notification.sendSystemNotification(Translate.getTranslate("generic.update_failed"), TrayIcon.MessageType.ERROR);
+            this.logger.info("Here am I !");
+            this.showPlayButton();
+            this.isDownloading = false;
             Platform.runLater(() -> this.panelManager.getStage().show());
         }
     }

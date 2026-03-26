@@ -120,7 +120,7 @@ public class Settings extends ContentPanel {
         }
         setTop(slider);
         setCenterH(slider);
-        slider.setTranslateY(150d);
+        slider.setTranslateY(130d);
         contentPane.getChildren().add(slider);
 
 
@@ -140,7 +140,7 @@ public class Settings extends ContentPanel {
                 Translate.getTranslate("setting.pref.hide"),
                      Translate.getTranslate("setting.pref.close")
         );
-        priorityComboBox.getStyleClass().add("acc-selector");
+        priorityComboBox.getStyleClass().add("version-combobox");
         setLeft(priorityComboBox);
         setCanTakeAllSize(priorityComboBox);
         setTop(priorityComboBox);
@@ -176,7 +176,7 @@ public class Settings extends ContentPanel {
         for (Object o : Translate.languageList()) {
             langcombobox.getItems().add((String) o);
         }
-        langcombobox.getStyleClass().add("acc-selector");
+        langcombobox.getStyleClass().add("version-combobox");
         setLeft(langcombobox);
         setCanTakeAllSize(langcombobox);
         setTop(langcombobox);

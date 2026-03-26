@@ -8,15 +8,20 @@ import fr.flowarg.materialdesignfontfx.MaterialDesignIcon;
 import fr.flowarg.materialdesignfontfx.MaterialDesignIconView;
 import fr.theshark34.openlauncherlib.util.Saver;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
+import javafx.geometry.HPos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.TextAlignment;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -24,225 +29,145 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Locale;
 
+public class Account extends ContentPanel {
+    private final Saver saver = Launcher.getInstance().getSaver();
+    GridPane contentPane = new GridPane();
 
-public class Account extends  ContentPanel{
-        private final Saver saver = Launcher.getInstance().getSaver();
-        GridPane contentPane = new GridPane();
-    ContentPanel currentPage = null;
-
-        @Override
-        public String getName() {
-            return "account";
-        }
-
-        @Override
-        public String getStylesheetPath() {
-            return "css/content/account.css";
-        }
-
-        @Override
-        public void init(PanelManager panelManager) {
-            super.init(panelManager);
-
-            // Background
-            this.layout.getStyleClass().add("settings-layout");
-            this.layout.setPadding(new Insets(40));
-            setCanTakeAllSize(this.layout);
-
-            // Content
-            contentPane.getStyleClass().add("content-pane");
-            setCanTakeAllSize(contentPane);
-            this.layout.getChildren().add(contentPane);
-
-            // Titre
-            Label title = new Label(Translate.getTranslate("account.pagename"));
-            title.setFont(Font.font("Consolas", FontWeight.BOLD, FontPosture.REGULAR, 25f));
-            title.getStyleClass().add("settings-title");
-            setLeft(title);
-            setCanTakeAllSize(title);
-            setTop(title);
-            title.setTextAlignment(TextAlignment.LEFT);
-            title.setTranslateY(40d);
-            title.setTranslateX(25d);
-            contentPane.getChildren().add(title);
-
-            // RAM
-            if (Launcher.getInstance().getAuthInfos() != null) {
-            // Pseudo + avatar
-            GridPane userPane = new GridPane();
-            userPane.setTranslateY(100d);
-            setCanTakeAllWidth(userPane);
-            userPane.setMaxHeight(PanelManager.getLauncherHeight()*0.5);
-            userPane.setMinWidth(80);
-            userPane.getStyleClass().add("user-pane");
-            setTop(userPane);
-
-
-            if(saver.get("offline-username")!= null){
-                String avatarUrl = "images/steve_body.png";
-                ImageView avatarView = new ImageView();
-                Image avatarImg = new Image(avatarUrl);
-                avatarView.setImage(avatarImg);
-                avatarView.setPreserveRatio(true);
-                avatarView.setFitHeight(userPane.getMaxHeight()*0.85);
-                setCenterV(avatarView);
-                setCanTakeAllSize(avatarView);
-                setLeft(avatarView);
-                avatarView.setTranslateX(50d);
-                userPane.getChildren().add(avatarView);
-            }else{
-
-                    if (saver.get("username") != null) {
-
-                        String avatarUrl = Launcher.launcherDir.resolve("player_body.png").toUri().toString().toLowerCase(Locale.ROOT);
-                        ImageView avatarView = new ImageView();
-                        Image avatarImg = new Image(avatarUrl);
-                        avatarView.setImage(avatarImg);
-                        avatarView.setPreserveRatio(true);
-                        avatarView.setFitHeight(userPane.getMaxHeight()*0.85);
-                        setCenterV(avatarView);
-                        setCanTakeAllSize(avatarView);
-                        setLeft(avatarView);
-                        avatarView.setTranslateX(50d);
-                        userPane.getChildren().add(avatarView);
-
-                    } else {
-
-                        String avatarUrl = "/images/steve_body.png";
-                        ImageView avatarView = new ImageView();
-                        Image avatarImg = new Image(avatarUrl);
-                        avatarView.setImage(avatarImg);
-                        avatarView.setPreserveRatio(true);
-                        avatarView.setFitHeight(userPane.getMaxHeight() * 0.85);
-                        setCenterV(avatarView);
-                        setCanTakeAllSize(avatarView);
-                        setLeft(avatarView);
-                        avatarView.setTranslateX(50d);
-                        userPane.getChildren().add(avatarView);
-                    }
+    @Override
+    public String getName() {
+        return "account";
     }
 
-            Label NameLabel = new Label(Translate.getTranslate("account.user"));
-            NameLabel.setFont(Font.font("Consolas", FontWeight.BOLD, FontPosture.REGULAR, 40f));
-            setCanTakeAllSize(NameLabel);
-            setTop(NameLabel);
-            setLeft(NameLabel);
-            NameLabel.getStyleClass().add("def-label");
-            NameLabel.setTranslateX(250d);
-            NameLabel.setTranslateY(50d);
-            setCanTakeAllWidth(NameLabel);
-            userPane.getChildren().add(NameLabel);
+    @Override
+    public String getStylesheetPath() {
+        return "css/content/account.css";
+    }
 
-            Label usernameLabel = new Label(Launcher.getInstance().getAuthInfos().getUsername());
-            usernameLabel.setFont(Font.font("Consolas", FontWeight.BOLD, FontPosture.REGULAR, 40f));
-            setCanTakeAllSize(usernameLabel);
-            setTop(usernameLabel);
-            setLeft(usernameLabel);
-            usernameLabel.setTranslateY(100d);
-            usernameLabel.getStyleClass().add("use-label");
-            usernameLabel.setTranslateX(275d);
-            setCanTakeAllWidth(usernameLabel);
-            userPane.getChildren().add(usernameLabel);
+    @Override
+    public void init(PanelManager panelManager) {
+        super.init(panelManager);
 
+        // Background et Layout Principal
+        this.layout.getStyleClass().add("settings-layout");
+        this.layout.setPadding(new Insets(30));
+        setCanTakeAllSize(this.layout);
 
-            Label uidLabel = new Label(Translate.getTranslate("account.user.type"));
-            uidLabel.setFont(Font.font("Consolas", FontWeight.BOLD, FontPosture.REGULAR, 40f));
-            setCanTakeAllSize(uidLabel);
-            setTop(uidLabel);
-            setLeft(uidLabel);
-            uidLabel.getStyleClass().add("def-label");
-            uidLabel.setTranslateY(150d);
-            uidLabel.setTranslateX(250d);
-            setCanTakeAllWidth(uidLabel);
-            userPane.getChildren().add(uidLabel);
+        // Conteneur de contenu (Glass Card)
+        contentPane.getStyleClass().add("box-pane");
+        setCanTakeAllSize(contentPane);
+        contentPane.setPadding(new Insets(30));
+        this.layout.getChildren().add(contentPane);
 
-            if(saver.get("username") != null){
-                try{
-                    Launcher.IsOnline();
-                    String avatarUrl = "/images/microsoft.png";
-                    ImageView UUIDLabel = new ImageView();
-                    Image avatarImg = new Image(avatarUrl);
-                    UUIDLabel.setImage(avatarImg);
-                    UUIDLabel.setPreserveRatio(true);
-                    UUIDLabel.setFitHeight(50d);
-                    setCanTakeAllSize(UUIDLabel);
-                    setTop(UUIDLabel);
-                    setLeft(UUIDLabel);
-                    UUIDLabel.setTranslateX(275d);
-                    UUIDLabel.setTranslateY(200d);
-                    userPane.getChildren().add(UUIDLabel);
-                }catch (Exception e){
-                    String type = Translate.getTranslate("account.user.type.no_connection");
-                    Label UUIDLabel = new Label(type);
-                    UUIDLabel.setFont(Font.font("Consolas", FontWeight.BOLD, FontPosture.REGULAR, 40f));
-                    setCanTakeAllSize(UUIDLabel);
-                    setTop(UUIDLabel);
-                    setLeft(UUIDLabel);
-                    UUIDLabel.setTranslateY(200d);
-                    UUIDLabel.getStyleClass().add("use-label");
-                    UUIDLabel.setTranslateX(275d);
-                    setCanTakeAllWidth(UUIDLabel);
-                    userPane.getChildren().add(UUIDLabel);
-                }
-            }else{
-                String type = Translate.getTranslate("account.user.type.offline");
-                Label UUIDLabel = new Label(type);
-                UUIDLabel.setFont(Font.font("Consolas", FontWeight.BOLD, FontPosture.REGULAR, 40f));
-                setCanTakeAllSize(UUIDLabel);
-                setTop(UUIDLabel);
-                setLeft(UUIDLabel);
-                UUIDLabel.setTranslateY(200d);
-                UUIDLabel.getStyleClass().add("use-label");
-                UUIDLabel.setTranslateX(275d);
-                setCanTakeAllWidth(UUIDLabel);
-                userPane.getChildren().add(UUIDLabel);
+        // 1. Titre de la page
+        Label title = new Label(Translate.getTranslate("account.pagename").toUpperCase());
+        title.getStyleClass().add("settings-title");
+        title.setFont(Font.font("Segoe UI", FontWeight.BOLD, 28));
+        contentPane.add(title, 0, 0);
+        GridPane.setMargin(title, new Insets(0, 0, 30, 0));
+
+        if (Launcher.getInstance().getAuthInfos() != null) {
+
+            // 2. Panneau Utilisateur (Structure Horizontale)
+            GridPane userPane = new GridPane();
+            userPane.getStyleClass().add("user-pane");
+            userPane.setHgap(40);
+            userPane.setPadding(new Insets(25));
+            setCanTakeAllWidth(userPane);
+
+            // Colonnes : [Avatar] [Infos] [Logout]
+            ColumnConstraints colAvatar = new ColumnConstraints();
+            ColumnConstraints colInfos = new ColumnConstraints();
+            colInfos.setHgrow(Priority.ALWAYS); // Les infos prennent l'espace
+            ColumnConstraints colAction = new ColumnConstraints();
+            userPane.getColumnConstraints().addAll(colAvatar, colInfos, colAction);
+
+            // --- AVATAR (Body) ---
+            String avatarUrl = "images/steve_body.png";
+            if (saver.get("username") != null && saver.get("offline-username") == null) {
+                avatarUrl = Launcher.launcherDir.resolve("player_body.png").toUri().toString();
             }
 
+            ImageView avatarView = new ImageView(new Image(avatarUrl));
+            avatarView.setPreserveRatio(true);
+            avatarView.setFitHeight(250);
+            userPane.add(avatarView, 0, 0);
 
-            Button logoutBtn = new Button();
-            final var logoutIcon = new MaterialDesignIconView<>(MaterialDesignIcon.L.LOGOUT);
-            logoutIcon.getStyleClass().add("logout-icon");
-            setCanTakeAllSize(logoutBtn);
-            setCenterV(logoutBtn);
-            setRight(logoutBtn);
-            logoutBtn.getStyleClass().add("logout-btn");
-            logoutBtn.setGraphic(logoutIcon);
-            logoutBtn.setTranslateX(-40d);
-            logoutBtn.setOnMouseClicked(e -> {
+            // --- INFOS (Pseudo, Type, etc.) ---
+            VBox infoBox = new VBox(10);
+            infoBox.setAlignment(Pos.CENTER_LEFT);
 
-                if (currentPage instanceof Modded && ((Modded) currentPage).isDownloading()) {
-                    return;
-                }
+            Label labelTitle = new Label(Translate.getTranslate("account.user"));
+            labelTitle.getStyleClass().add("def-label");
+            labelTitle.setOpacity(0.6);
 
-                if (currentPage instanceof Vanilla && ((Vanilla) currentPage).isDownloading()) {
-                    return;
-                }
+            Label usernameLabel = new Label(Launcher.getInstance().getAuthInfos().getUsername());
+            usernameLabel.getStyleClass().add("use-label");
+            usernameLabel.setFont(Font.font("Segoe UI", FontWeight.BOLD, 35));
 
+            Label typeTitle = new Label(Translate.getTranslate("account.user.type"));
+            typeTitle.getStyleClass().add("def-label");
+            typeTitle.setOpacity(0.6);
+            GridPane.setMargin(typeTitle, new Insets(20, 0, 0, 0));
 
-                saver.remove("username");
-                saver.remove("UUID");
-                saver.remove("offline-username");
-                saver.remove("msAccessToken");
-                saver.remove("msRefreshToken");
-                saver.save();
-                Path path = Paths.get(Launcher.launcherDir.resolve("player_head.png").toString());
-                Path path1 = Paths.get(Launcher.launcherDir.resolve("player_body.png").toString());
+            // Gestion de l'icône de compte (Online/Offline)
+            Node typeIndicator;
+            if (saver.get("username") != null) {
                 try {
+                    Launcher.IsOnline();
+                    ImageView msLogo = new ImageView(new Image("images/microsoft.png"));
+                    msLogo.setPreserveRatio(true);
+                    msLogo.setFitHeight(30);
+                    typeIndicator = msLogo;
+                } catch (Exception e) {
+                    typeIndicator = new Label(Translate.getTranslate("account.user.type.no_connection"));
+                    typeIndicator.getStyleClass().add("use-label");
+                }
+            } else {
+                typeIndicator = new Label(Translate.getTranslate("account.user.type.offline"));
+                typeIndicator.getStyleClass().add("use-label");
+            }
 
-                    Files.deleteIfExists(path);
-                    Files.deleteIfExists(path1);
-                }
-                catch (IOException ek) {
-                    logger.err(ek.toString());
-                }
-                Launcher.getInstance().setAuthInfos(null);
-                this.panelManager.showPanel(new Login());
+            infoBox.getChildren().addAll(labelTitle, usernameLabel, typeTitle, typeIndicator);
+            userPane.add(infoBox, 1, 0);
+
+            // --- BOUTON DECONNEXION ---
+            Button logoutBtn = new Button();
+            logoutBtn.getStyleClass().add("logout-btn");
+
+            final var logoutIcon = new MaterialDesignIconView<>(MaterialDesignIcon.L.LOGOUT);
+            logoutIcon.setSize("40");
+            logoutIcon.setFill(javafx.scene.paint.Color.WHITE);
+
+            logoutBtn.setGraphic(logoutIcon);
+            logoutBtn.setCursor(javafx.scene.Cursor.HAND);
+
+            logoutBtn.setOnMouseClicked(e -> {
+                handleLogout();
             });
-            userPane.getChildren().add(logoutBtn);
 
-            contentPane.getChildren().add(userPane);
+            userPane.add(logoutBtn, 2, 0);
+            GridPane.setHalignment(logoutBtn, HPos.RIGHT);
+
+            contentPane.add(userPane, 0, 1);
+        }
+    }
+
+    private void handleLogout() {
+        saver.remove("username");
+        saver.remove("UUID");
+        saver.remove("offline-username");
+        saver.remove("msAccessToken");
+        saver.remove("msRefreshToken");
+        saver.save();
+
+        try {
+            Files.deleteIfExists(Launcher.launcherDir.resolve("player_head.png"));
+            Files.deleteIfExists(Launcher.launcherDir.resolve("player_body.png"));
+        } catch (IOException e) {
+            logger.err("Erreur lors de la suppression des images de skin: " + e.getMessage());
         }
 
-        }
-
+        Launcher.getInstance().setAuthInfos(null);
+        this.panelManager.showPanel(new Login());
+    }
 }

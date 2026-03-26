@@ -1,5 +1,6 @@
 .box-pane {
-    -fx-background-color: rgb(50, 50, 50);
+    -fx-background-color: #2d2d2d;
+    -fx-border-color: #5f5f5f;
 }
 
 .bg-image {
@@ -9,38 +10,45 @@
 }
 
 .play-btn {
-    -fx-background-radius: 10px;
-    -fx-font-size: 16px;
-    -fx-text-fill: #F5F5F5;
-    -fx-background-color: #b60000;
-}
-
-.play-icon {
-    -fx-fill: white;
+    -fx-background-radius: 12px;
+    -fx-font-family: "Segoe UI Semibold", sans-serif;
+    -fx-font-size: 20px;
+    -fx-text-fill: white;
+    /* Dégradé vibrant */
+    -fx-background-color: linear-gradient(to right, #ff4b2b, #ff416c);
+    -fx-padding: 15 60;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(255, 65, 108, 0.4), 20, 0, 0, 0);
 }
 
 .play-btn:hover {
-    -fx-background-color: #820000;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-background-color: linear-gradient(to right, #ff6a4d, #ff5a7e);
 }
 
 .download-progress {
-    -fx-max-width: 1000;
-    -fx-pref-width: 1000;
-    -fx-min-width: 100;
-    -fx-min-height: 10px;
-    -fx-max-height: 10px;
+    /* Force la barre à prendre toute la largeur possible */
+    -fx-pref-width: 9999px;
+    -fx-max-width: 10000px; /* On enlève la limite de 1000 */
+    -fx-min-width: 10px;
+
+    -fx-min-height: 12px;
+    -fx-max-height: 12px;
 }
 
 .download-progress > .bar {
-    -fx-background-color: #b60000;
+    -fx-background-color: linear-gradient(to right, #ff4b2b, #ff416c);
     -fx-background-insets: 0;
-    -fx-background-radius: 30px;
+    -fx-background-radius: 50px;
 }
 
 .download-progress > .track {
-    -fx-background-color: white;
+    -fx-background-color: rgba(255, 255, 255, 0.1);
     -fx-background-insets: 0;
-    -fx-background-radius: 30px;
+    -fx-background-radius: 50px;
+    -fx-border-color: rgba(255, 255, 255, 0.05);
+    -fx-border-radius: 50px;
 }
 
 .download-status {
@@ -59,55 +67,59 @@
 }
 
 .version-combobox .scroll-bar *{
-    -fx-background-color: rgb(99, 99, 99);
+    -fx-background-color: #1a1a1a;
 }
 
 .version-combobox .increment-button * , .version-combobox .decrement-button *{
-    -fx-background-color: rgb(0, 0, 0);
+    -fx-background-color: #1a1a1a;
 }
 
 .version-combobox .arrow{
-    -fx-background-color: rgb(0, 0, 0);
+    -fx-background-color: white;
+    -fx-shape: "M 0 0 L 4 4 L 8 0 Z";
 }
 .version-combobox {
-    -fx-width: 200px;
+    -fx-width: 50px;
     -fx-height: 25px;
-    -fx-background-color: rgb(70, 70, 70);
+    -fx-background-color: #1a1a1a;
     -fx-text-fill: white;
 }
 .version-combobox .list-view {
-    -fx-background-color: rgb(70, 70, 70);
+    -fx-background-color: #1a1a1a;
     -fx-text-fill:white;
 }
 
 .version-combobox .list-view .list-cell:selected{
-    -fx-background-color: #b60000;
+    -fx-background-color: linear-gradient(to right, rgba(255, 75, 43, 0.9), rgba(255, 65, 108, 0.9));
+    -fx-effect: dropshadow(three-pass-box, rgba(255, 65, 108, 0.4), 20, 0, 0, 0);
     -fx-text-fill:white;
 }
 
 .version-combobox .list-cell:hover {
     -fx-text-fill: white;
-    -fx-background-color:#7b0000 !important;
+    -fx-background-color: linear-gradient(to right, #c13b24, #9c2940) !important;
 }
 .version-combobox .list-cell{
 -fx-text-fill: white;
--fx-background-color: rgb(70, 70, 70);
+-fx-background-color: #1a1a1a;
 }
 
 .version-combobox .track  {
-    -fx-background-color: rgb(99, 99, 99);
+    -fx-background-color: #1a1a1a;
 }
 
 .version-combobox .list-view .increment-button , .version-combobox .list-view .decrement-button  {
-    -fx-pref-height:20.0px;
-    -fx-pref-width:20.0px;
-    -fx-border-color:rgb(99, 99, 99);
-    -fx-background-color:rgb(99, 99, 99);
+    -fx-pref-height:20px;
+    -fx-pref-width:20px;
+    -fx-border-color:#1a1a1a;
+    -fx-background-color: #1a1a1a;
     -fx-text-fill:white;
+    -fx-content-display: none;
 }
 
 .version-combobox .thumb {
-    -fx-background-color: #b60000;
+    -fx-background-color: linear-gradient(to bottom, rgba(255, 75, 43, 0.9), rgba(255, 65, 108, 0.9));
+    -fx-effect: dropshadow(three-pass-box, rgba(255, 65, 108, 0.4), 20, 0, 0, 0);
 }
 .login-mode-chk {
     -fx-text-fill: white;
@@ -120,7 +132,8 @@
 }
 
 .login-mode-chk:selected .box {
-    -fx-background-color: #b60000;
+    -fx-background-color: linear-gradient(to bottom, rgba(255, 75, 43, 0.9), rgba(255, 65, 108, 0.9));
+    -fx-effect: dropshadow(three-pass-box, rgba(255, 65, 108, 0.4), 20, 0, 0, 0);
 }
 
 .login-mode-chk {
@@ -134,10 +147,17 @@
 }
 
 .login-mode-chk:selected .box {
-    -fx-background-color: #b60000;
+    -fx-background-color: linear-gradient(to bottom, rgba(255, 75, 43, 0.9), rgba(255, 65, 108, 0.9));
+    -fx-effect: dropshadow(three-pass-box, rgba(255, 65, 108, 0.4), 20, 0, 0, 0);
 }
 
 .login-mode-chk:selected .box .mark {
      -fx-background-color: white;
 
+}
+
+
+
+.play-icon{
+    -fx-fill: white;
 }

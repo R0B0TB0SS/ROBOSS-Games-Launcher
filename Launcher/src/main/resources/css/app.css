@@ -1,44 +1,35 @@
 .app-layout {
-    -fx-background: rgb(10, 12, 12);
+    -fx-background-color: rgba(0, 0, 0, 0.5); /* Un noir plus profond */
+    -fx-background: transparent;
 }
 
 .sidemenu {
-    /* Dégradé métallique sombre */
-    -fx-background-color: linear-gradient(to right, #2a2a2a 0%, #3a3a3a 50%, #2a2a2a 100%);
-    -fx-border-color: transparent #151515 transparent transparent;
-    -fx-border-width: 2px;
-    -fx-padding: 15px 10px;
-}
-
-.home-title {
-    -fx-text-fill: rgb(20, 25, 25);
+    /* Effet de verre fumé */
+    -fx-background-color: #2d2d2d;
+    /*-fx-border-color: transparent rgba(255, 255, 255, 0.05) transparent transparent;*/
+    -fx-border-width: 1px;
+    -fx-border-color: #5f5f5f;
+    -fx-padding: 20px 12px;
 }
 
 .sidemenu-nav-btn {
-    -fx-background-color: linear-gradient(to bottom, #444, #333);
-    -fx-background-radius: 8px; /* Moins arrondi pour un look plus "pro" */
-    -fx-border-color: #222;
-    -fx-border-radius: 8px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 5, 0, 0, 2);
-}
-
-.sidemenu-nav-btn:hover {
-    -fx-background-color: rgb(40, 40, 40, 0.6);
+    -fx-alignment: CENTER; /* Centre le contenu (l'icône) horizontalement et verticalement */
+    -fx-padding: 0;        /* Enlève les marges internes qui pourraient décaler l'image */
+    -fx-background-color: #1a1a1a; /* Optionnel : fond léger */
+    -fx-background-radius: 15px;
+    -fx-border-width: 1px;
+    -fx-border-color: #5f5f5f;
+    -fx-border-radius: 15px;
 }
 
 .sidemenu-nav-btn.active {
-    /* Le rouge devient un dégradé pour éviter l'aspect "plastique" */
-    -fx-background-color: linear-gradient(to bottom, #c0392b, #8e1e1a);
-    -fx-border-color: #5e110f;
-}
-.sidemenu-nav-btn.active:hover {
-    -fx-background-color: #860000;
+    -fx-alignment: CENTER; /* Centre le contenu (l'icône) horizontalement et verticalement */
+    -fx-padding: 0;        /* Enlève les marges internes qui pourraient décaler l'image */
+    -fx-background-color: linear-gradient(to right, rgba(255, 75, 43, 0.75), rgba(255, 65, 108, 0.75)); /* Optionnel : fond léger */
+    -fx-background-radius: 15px;
+
 }
 
-.nav-content {
-    -fx-background-color: rgba(50, 50, 50, 0.4);
+.sidemenu-nav-btn .graphic-container {
+    -fx-alignment: CENTER;
 }
-.box-notif-error{
-    -fx-background-color: #860000
-}
-

@@ -7,12 +7,15 @@ import be.R0B0TB0SS.launcher.ui.PanelManager;
 import be.R0B0TB0SS.launcher.ui.panels.pages.App;
 import be.R0B0TB0SS.launcher.ui.panels.pages.Login;
 import be.R0B0TB0SS.launcher.utils.debug.Debugger;
+import be.R0B0TB0SS.launcher.utils.desktop.Notification;
 import be.R0B0TB0SS.launcher.utils.translate.Translate;
 import fr.flowarg.flowlogger.ILogger;
 import fr.flowarg.flowlogger.Logger;
 import fr.theshark34.openlauncherlib.minecraft.AuthInfos;
 import fr.theshark34.openlauncherlib.minecraft.util.GameDirGenerator;
 import fr.theshark34.openlauncherlib.util.Saver;
+
+import java.awt.*;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -29,7 +32,7 @@ import javafx.stage.Stage;
 
 public class Launcher extends Application {
 
-    public static String VERSION = "1.1.3";
+    public static String VERSION = "1.1.5";
     private static Launcher instance;
     private final ILogger logger;
     public static final Path launcherDir = GameDirGenerator.createGameDir("robossgames", true);
@@ -147,6 +150,7 @@ public class Launcher extends Application {
 
                 Path path = Paths.get(launcherDir.resolve("player_head.png").toString());
                 Path path1 = Paths.get(launcherDir.resolve("player_body.png").toString());
+                Notification.sendSystemNotification(Translate.getTranslate("error.login"), TrayIcon.MessageType.ERROR);
                 try {
 
                     Files.deleteIfExists(path);

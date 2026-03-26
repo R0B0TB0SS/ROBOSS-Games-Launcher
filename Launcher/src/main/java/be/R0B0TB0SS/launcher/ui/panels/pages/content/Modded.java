@@ -4,6 +4,7 @@ import be.R0B0TB0SS.launcher.Launcher;
 import be.R0B0TB0SS.launcher.ui.PanelManager;
 import be.R0B0TB0SS.launcher.utils.StepInfo;
 import be.R0B0TB0SS.launcher.utils.deleter.DeleterUtils;
+import be.R0B0TB0SS.launcher.utils.desktop.Notification;
 import be.R0B0TB0SS.launcher.utils.translate.Translate;
 import com.google.gson.JsonObject;
 import fr.flowarg.flowupdater.FlowUpdater;
@@ -34,9 +35,11 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 
+import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Objects;
@@ -54,7 +57,9 @@ public class Modded extends ContentPanel {
     private static String PROJECT_ID = null;
     private static String FILE_ID = null;
     private static Boolean EXT_REQ = true;
+    private static String MODLOADER;
     private static final Path instancedir = Path.of(Launcher.getInstance().getLauncherDir() + "/modded");
+    private static String NAME = Translate.getTranslate("modded.name");
 
     GridPane boxPane = new GridPane();
     ProgressBar progressBar = new ProgressBar();
@@ -100,34 +105,41 @@ public class Modded extends ContentPanel {
         NameLabem();
         try {
             IsOnline();
+            Launcher.downloadFile(DATA_URL, instancedir + "/modded.json");
             JsonObject object = IOUtils.readJson(new URL(DATA_URL)).getAsJsonObject();
-            JsonObject version = (JsonObject) object.get("version");
-            GAME_VERSION = String.valueOf(version.get("minecraft")).split("\"")[1];
-            MODDED_VER = String.valueOf(version.get("modded_ver")).split("\"")[1];
-            PROJECT_ID = String.valueOf(version.get("project_id")).split("\"")[1];
-            FILE_ID=String.valueOf(version.get("file_id")).split("\"")[1];
-            if (object.has("whitelist")) {
-                object.getAsJsonArray("whitelist").forEach(element ->
-                        WHITELIST_FILES.add(element.getAsString()));
-            }
-            if (object.has("blacklist")) {
-                object.getAsJsonArray("blacklist").forEach(element ->
-                        BLACKLIST_FILES.add(element.getAsString()));
-            }
+            getModdedJsonData(object);
+            this.showPlayButton();
 
-        }catch (Exception ee){
-            logger.err("No internet....");
+        } catch (Exception ee) {
+            logger.err("No internet.... Trying to read local modded.json");
+            try {
+                Path local = instancedir.resolve("modded.json");
+                if (Files.exists(local)) {
+                    String jsonStr = Files.readString(local);
+                    com.google.gson.JsonObject object = com.google.gson.JsonParser.parseString(jsonStr).getAsJsonObject();
+                    getModdedJsonData(object);
+                    this.showPlayButton();
+                } else {
+                    logger.err("Local modded.json not found: " + local.toAbsolutePath());
+                    Notification.sendSystemNotification(Translate.getTranslate("generic.unable_to_load"), TrayIcon.MessageType.ERROR);
+                }
+            } catch (Exception ex) {
+                Launcher.getInstance().getLogger().printStackTrace(ex);
+                Notification.sendSystemNotification(Translate.getTranslate("generic.unable_to_load"), TrayIcon.MessageType.ERROR);
+            }
         }
-        this.showPlayButton();
+
     }
     private void NameLabem(){
-        Label roboss = new Label("Modded");
-        roboss.setFont(Font.font("Consolas", FontWeight.BOLD, FontPosture.REGULAR, 18f));
-        roboss.setStyle("-fx-text-fill: white;");
-        setLeft(roboss);
-        roboss.setTranslateX(20);
-        this.boxPane.getChildren().add(roboss);
+        Label name = new Label(NAME);
+        name.setFont(Font.font("Consolas", FontWeight.BOLD, FontPosture.REGULAR, 18f));
+        name.setStyle("-fx-text-fill: white;");
+        setLeft(name);
+        name.setTranslateX(20);
+        name.setTranslateY(5);
+        this.boxPane.getChildren().add(name);
     }
+
 
 
     private void showPlayButton() {
@@ -138,6 +150,7 @@ public class Modded extends ContentPanel {
         this.setCanTakeAllSize(playBtn);
         this.setCenterH(playBtn);
         this.setCenterV(playBtn);
+        playBtn.setTranslateY(10);
         playBtn.getStyleClass().add("play-btn");
         playBtn.setGraphic(playIcon);
         playBtn.setOnMouseClicked(e -> this.play());
@@ -229,6 +242,10 @@ public class Modded extends ContentPanel {
         }
         catch (Exception e) {
             Launcher.getInstance().getLogger().printStackTrace(e);
+            Notification.sendSystemNotification(Translate.getTranslate("generic.update_failed"), TrayIcon.MessageType.ERROR);
+            this.logger.info("Here am I !");
+            this.showPlayButton();
+            this.isDownloading = false;
             Platform.runLater(() -> this.panelManager.getStage().show());
         }
     }
@@ -291,5 +308,22 @@ public class Modded extends ContentPanel {
     public boolean isDownloading() {
         return this.isDownloading;
     }
+
+    private void getModdedJsonData(JsonObject moddedJson) {
+        if (moddedJson.has("version")) {
+            JsonObject version = (JsonObject) moddedJson.get("version");
+            GAME_VERSION = String.valueOf(version.get("minecraft")).split("\"")[1];
+            MODDED_VER = String.valueOf(version.get("modded_ver")).split("\"")[1];
+            PROJECT_ID = String.valueOf(version.get("project_id")).split("\"")[1];
+            FILE_ID = String.valueOf(version.get("file_id")).split("\"")[1];
+            MODLOADER = String.valueOf(version.get("modloader")).split("\"")[1];
+            try { NAME = String.valueOf(version.get("name")).split("\"")[1]; } catch (Exception ignored) {}
+        }
+        if (moddedJson.has("whitelist")) {
+            moddedJson.getAsJsonArray("whitelist").forEach(element -> WHITELIST_FILES.add(element.getAsString()));
+        }
+        if (moddedJson.has("blacklist")) {
+            moddedJson.getAsJsonArray("blacklist").forEach(element -> BLACKLIST_FILES.add(element.getAsString()));
+        }    }
 
 }
