@@ -6,11 +6,14 @@ import be.R0B0TB0SS.launcher.utils.tray.RobossSystemTray;
 import com.goxr3plus.fxborderlessscene.borderless.BorderlessScene;
 import fr.flowarg.flowcompat.Platform;
 import javafx.geometry.HPos;
+import javafx.geometry.VPos;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -23,102 +26,96 @@ public class PanelManager {
     private static GridPane layout;
     static Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();
     private final GridPane contentPane = new GridPane();
-    private  final ImageView loadingText = new ImageView(new Image("images/loading.png"));
-    private  final ImageView icon= new ImageView(new Image("images/icon.png"));
-    private  final ImageView logo= new ImageView(new Image("images/logo.png"));
+
+    // Conteneur pour grouper les éléments du chargement
+    private final VBox loadingContainer = new VBox(20);
+    private final ImageView loadingText = new ImageView(new Image("images/loading.png"));
+    private final ImageView icon = new ImageView(new Image("images/icon.png"));
+    private final ImageView logo = new ImageView(new Image("images/logo.png"));
 
     public PanelManager(Launcher launcher, Stage stage) {
         this.launcher = launcher;
         this.stage = stage;
     }
+
     public void start() {
         RobossSystemTray.create();
-        loadingText.setPreserveRatio(true);
-        loadingText.setFitHeight(stage.getHeight()*0.05);
-        loadingText.setTranslateY(stage.getHeight()*0.55);
-        loadingText.setTranslateX(stage.getWidth()*0.01);
-        GridPane.setHalignment(loadingText, HPos.CENTER);
-        layout.getChildren().add(loadingText);
 
+        // Configuration des images
         icon.setPreserveRatio(true);
-        icon.setFitHeight(stage.getHeight()*0.55);
-        GridPane.setHalignment(icon , HPos.CENTER);
-        icon.setTranslateY(stage.getHeight()*0.05);
-        layout.getChildren().add(icon);
+        icon.setFitHeight(getLauncherHeight() * 0.30);
 
         logo.setPreserveRatio(true);
-        logo.setFitWidth(stage.getHeight()*0.55);
-        GridPane.setHalignment(logo , HPos.CENTER);
-        logo.setTranslateY(stage.getHeight()*0.35);
-        logo.setTranslateX(stage.getWidth()*-0.008);
-        layout.getChildren().add(logo);
+        logo.setFitWidth(getLauncherWidth() * 0.25);
+
+        loadingText.setPreserveRatio(true);
+        loadingText.setFitHeight(20); // Taille fixe pour le texte "Loading"
+
+        // On groupe tout dans un VBox pour un centrage parfait sans Translate
+        loadingContainer.setAlignment(Pos.CENTER);
+        loadingContainer.getChildren().addAll(icon, logo, loadingText);
+
+        // On ajoute le conteneur au centre de la grille principale
+        layout.add(loadingContainer, 0, 1);
+        GridPane.setHalignment(loadingContainer, HPos.CENTER);
+        GridPane.setValignment(loadingContainer, VPos.CENTER);
     }
 
-
-
     public void init() {
-        int height = (int)(screenDimension.getHeight() * 0.66666);
-        int width = (int)(screenDimension.getWidth() * 0.66666);
+        int height = (int) getLauncherHeight();
+        int width = (int) getLauncherWidth();
+
         this.stage.setTitle("ROBOSS Games Launcher");
         stage.getIcons().add(new Image("/images/icon.png"));
+
         this.stage.setMinWidth(width);
         this.stage.setMinHeight(height);
         this.stage.setWidth(width);
         this.stage.setHeight(height);
         this.stage.centerOnScreen();
 
-
         layout = new GridPane();
-
+        // Fond sombre dès le départ pour éviter le flash blanc
+        layout.setStyle("-fx-background-color: #0d0f10;");
 
         if (Platform.isOnLinux()) {
             Scene scene = new Scene(layout);
             this.stage.setScene(scene);
         } else {
+            // Note: StageStyle.TRANSPARENT permet d'avoir des bords arrondis via CSS si BorderlessScene le supporte
             this.stage.initStyle(StageStyle.DECORATED);
-            //TopBar topBar = new TopBar();
+
             BorderlessScene scene = new BorderlessScene(this.stage, StageStyle.DECORATED, layout);
             scene.setResizable(false);
-            //scene.setMoveControl(topBar.getLayout());
             scene.removeDefaultCSS();
 
-
             this.stage.setScene(scene);
-
-            //RowConstraints topPaneContraints = new RowConstraints();
-            //topPaneContraints.setValignment(VPos.TOP);
-            //topPaneContraints.setMinHeight(30);
-            //topPaneContraints.setMaxHeight(30);
-            //layout.getRowConstraints().addAll(topPaneContraints, new RowConstraints());
-            //layout.add(topBar.getLayout(), 0, 0);
-            //topBar.init(this);
-
-
-
-            scene.setFill(Color.rgb(50,50,50));
-
+            scene.setFill(Color.web("#0d0f10"));
         }
 
+        // Zone où s'afficheront les pages (Account, Home, etc.)
         layout.add(this.contentPane, 0, 1);
         GridPane.setVgrow(this.contentPane, Priority.ALWAYS);
         GridPane.setHgrow(this.contentPane, Priority.ALWAYS);
 
-            this.stage.show();
+        this.stage.show();
     }
 
-
     public void showPanel(IPanel panel) {
+        // Supprime l'écran de chargement s'il est présent
+        layout.getChildren().remove(loadingContainer);
+
         this.contentPane.getChildren().clear();
         this.contentPane.getChildren().add(panel.getLayout());
+
+        // Gestion des feuilles de style
+        this.stage.getScene().getStylesheets().clear();
         if (panel.getStylesheetPath() != null) {
-            this.stage.getScene().getStylesheets().clear();
             this.stage.getScene().getStylesheets().add(panel.getStylesheetPath());
         }
+
         panel.init(this);
         panel.onShow();
-        layout.getChildren().remove(loadingText);
-        layout.getChildren().remove(icon);
-        layout.getChildren().remove(logo);
     }
 
     public Stage getStage() {
@@ -132,6 +129,7 @@ public class PanelManager {
     public static double getLauncherWidth(){
         return screenDimension.getWidth() * 0.66666;
     }
+
     public static double getLauncherHeight(){
         return screenDimension.getHeight() * 0.66666;
     }
