@@ -1,7 +1,7 @@
-package be.R0B0TB0SS.launcher.authentification;
+package be.R0B0TB0SS.launcher.utils.authentification;
 
 
-import be.R0B0TB0SS.launcher.authentification.model.response.MinecraftProfile;
+import be.R0B0TB0SS.launcher.utils.authentification.model.response.MinecraftProfile;
 
 public class MicrosoftAuthResult
 {

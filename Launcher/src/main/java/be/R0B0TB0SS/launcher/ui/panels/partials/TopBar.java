@@ -34,7 +34,7 @@ public class TopBar extends Panel {
         Label title = new Label("ROBOSS Games Launcher");
         title.setFont(Font.font("Consolas", FontWeight.BOLD, FontPosture.REGULAR, 18f));
         title.setStyle("-fx-text-fill: white;");
-        setLeft(title);
+        setCenterH(title);
         title.setTranslateX(20);
         this.layout.getChildren().add(title);
 

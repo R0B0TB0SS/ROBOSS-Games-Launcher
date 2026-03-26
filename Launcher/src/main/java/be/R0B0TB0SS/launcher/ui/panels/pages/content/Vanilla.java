@@ -2,6 +2,7 @@ package be.R0B0TB0SS.launcher.ui.panels.pages.content;
 
 import be.R0B0TB0SS.launcher.Launcher;
 import be.R0B0TB0SS.launcher.ui.PanelManager;
+import be.R0B0TB0SS.launcher.utils.StepInfo;
 import be.R0B0TB0SS.launcher.utils.translate.Translate;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -249,7 +250,7 @@ public class Vanilla extends ContentPanel {
 
             public void step(Step step) {
                 Platform.runLater(() -> {
-                    this.stepTxt = RobossFactory.StepInfo.valueOf(step.name()).getDetails();
+                    this.stepTxt = StepInfo.valueOf(step.name()).getDetails();
                     Vanilla.this.setStatus(String.format("%s (%s)", this.stepTxt, this.percentTxt));
                 });
             }
@@ -355,23 +356,4 @@ public class Vanilla extends ContentPanel {
         return this.isDownloading;
     }
 
-    public static enum StepInfo {
-        READ(Translate.getTranslate("step.read")),
-        DL_LIBS(Translate.getTranslate("step.dl_libs")),
-        DL_ASSETS(Translate.getTranslate("step.dl_assets")),
-        EXTRACT_NATIVES(Translate.getTranslate("step.extract_natives")),
-        EXTERNAL_FILES(Translate.getTranslate("step.external_files")),
-        POST_EXECUTIONS(Translate.getTranslate("step.post_executions")),
-        END(Translate.getTranslate("step.end"));
-
-        final String details;
-
-        StepInfo(String details) {
-            this.details = details;
-        }
-
-        public String getDetails() {
-            return this.details;
-        }
-    }
 }

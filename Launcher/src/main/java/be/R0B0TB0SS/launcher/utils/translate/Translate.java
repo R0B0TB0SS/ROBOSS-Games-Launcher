@@ -23,10 +23,10 @@ public class Translate {
             JsonObject mainJsonObject = IOUtils.readJson(inputStream).getAsJsonObject();
             JsonArray langArray = (JsonArray) mainJsonObject.get("lang");
             for (Object o : langArray) {
-                JsonObject langlist = (JsonObject) o;
-                String arlang = String.valueOf(langlist.get("file")).split("\"")[1];
-                if (Objects.equals(arlang,file)) {
-                    language = String.valueOf(langlist.get("language")).split("\"")[1];
+                JsonObject langList = (JsonObject) o;
+                String arLang = String.valueOf(langList.get("file")).split("\"")[1];
+                if (Objects.equals(arLang,file)) {
+                    language = String.valueOf(langList.get("language")).split("\"")[1];
                 }
             }
         } catch (Exception ignored) {
@@ -51,7 +51,7 @@ public class Translate {
     public static String getTranslate(String id) {
         String file = saver.get("language");
 
-        String finalTranslate ="";
+        String finalTranslate;
         if(!isLanguageExist(file)){
             final String date = String.format("[%s] ", new SimpleDateFormat("hh:mm:ss").format(new Date()));
             System.out.println(date+"[ROBOSS Games launcher] [WARN]: Missing Key: \""+id+"\" in lang file.");
@@ -88,7 +88,9 @@ public class Translate {
             }
         } catch (Exception e) {
             // Log the exception to get more details on what went wrong
+
             e.printStackTrace();
+
         }
         return res;
     }

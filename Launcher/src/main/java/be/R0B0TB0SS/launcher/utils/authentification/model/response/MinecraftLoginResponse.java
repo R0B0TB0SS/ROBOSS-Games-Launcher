@@ -1,4 +1,4 @@
-package be.R0B0TB0SS.launcher.authentification.model.response;
+package be.R0B0TB0SS.launcher.utils.authentification.model.response;
 
 public class MinecraftLoginResponse
 {

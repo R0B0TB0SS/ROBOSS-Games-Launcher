@@ -2,12 +2,15 @@ package be.R0B0TB0SS.launcher.ui.panels.pages.content;
 
 import be.R0B0TB0SS.launcher.Launcher;
 import be.R0B0TB0SS.launcher.ui.PanelManager;
+import be.R0B0TB0SS.launcher.utils.os.OsCheck;
 import be.R0B0TB0SS.launcher.utils.translate.Translate;
 import fr.flowarg.materialdesignfontfx.MaterialDesignIcon;
 import fr.flowarg.materialdesignfontfx.MaterialDesignIconView;
 import fr.theshark34.openlauncherlib.util.Saver;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
@@ -15,6 +18,10 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import oshi.SystemInfo;
 import oshi.hardware.GlobalMemory;
+
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.Objects;
 
 
@@ -198,6 +205,26 @@ public class Settings extends ContentPanel {
         version.setTranslateX(25d);
         version.setTranslateY(25d);
         contentPane.getChildren().add(version);
+
+
+        Button btnof = new Button(Translate.getTranslate("btn.of"));
+        btnof.getStyleClass().add("save-btn");
+        final var iconView2 = new MaterialDesignIconView<>(MaterialDesignIcon.F.FOLDER);
+        iconView2.getStyleClass().add("save-icon");
+        btnof.setGraphic(iconView2);
+        setCanTakeAllSize(btnof);
+        setTop(btnof);
+        setLeft(btnof);
+        btnof.setTranslateX(25d);
+        btnof.setTranslateY(375d);
+        btnof.setOnMouseClicked(e -> {
+            try {
+                Desktop.getDesktop().open(new File(OsCheck.getAppData() + "\\.robossgames"));
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+        contentPane.getChildren().add(btnof);
 
         /*
          * Save Button

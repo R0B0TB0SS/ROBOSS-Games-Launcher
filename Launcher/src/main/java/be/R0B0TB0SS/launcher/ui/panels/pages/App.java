@@ -23,7 +23,7 @@ public class App extends Panel {
     Node activeLink = null;
     public static ContentPanel currentPage = null;
 
-    Button homeBtn, settingsBtn , accBtn, VanillaBtn,CurseBtn;
+    Button homeBtn, settingsBtn , accBtn, VanillaBtn;
 
     Saver saver = Launcher.getInstance().getSaver();
 
@@ -73,7 +73,7 @@ public class App extends Panel {
         setCenterV(navContent);
 
         // Navigation
-        String homeimurl = "images/icon.png";
+        String homeimurl = "images/curseforge.png";
         ImageView homeimView = new ImageView();
         Image homeimImg = new Image(homeimurl);
         homeimView.setImage(homeimImg);
@@ -92,7 +92,7 @@ public class App extends Panel {
         setCenterV(homeBtn);
         homeBtn.setTranslateX(20d);
         homeBtn.setTranslateY(0);
-        homeBtn.setOnMouseClicked(e -> {setPage(new RobossFactory(), homeBtn); saver.set("LauncherPage", "home");});
+        homeBtn.setOnMouseClicked(e -> {setPage(new Modded(), homeBtn); saver.set("LauncherPage", "home");});
 
         String VanillaUrl = "images/vanilla.png";
         ImageView VanillaView = new ImageView();
@@ -113,26 +113,6 @@ public class App extends Panel {
         VanillaBtn.setTranslateY(-100d);
         VanillaBtn.setTranslateX(20d);
         VanillaBtn.setOnMouseClicked(e -> {setPage(new Vanilla(), VanillaBtn); saver.set("LauncherPage", "vanilla");});
-
-       String cursimgurl = "images/curseforge.png";
-        ImageView curseimvieaw = new ImageView();
-        Image curseimg = new Image(cursimgurl);
-        curseimvieaw.setImage(curseimg);
-        curseimvieaw.setPreserveRatio(true);
-        curseimvieaw.setFitHeight(60d);
-        curseimvieaw.isSmooth();
-        setCenterV(curseimvieaw);
-        setCanTakeAllSize(curseimvieaw);
-        setCenterH(curseimvieaw);
-
-        CurseBtn = new Button("");
-        CurseBtn.getStyleClass().add("sidemenu-nav-btn");
-        CurseBtn.setGraphic(curseimvieaw);
-        setCanTakeAllSize(CurseBtn);
-        setCenterV(CurseBtn);
-        CurseBtn.setTranslateX(20d);
-        CurseBtn.setTranslateY(100d);
-        CurseBtn.setOnMouseClicked(e -> {setPage(new Instances(), CurseBtn); saver.set("LauncherPage", "modded");});
 
         String cogimurl = "images/cog.png";
         ImageView cogimView = new ImageView();
@@ -205,7 +185,7 @@ public class App extends Panel {
         accBtn.setTranslateY(40d);
         accBtn.setOnMouseClicked(e -> setPage(new Account(), accBtn));
 
-        sidemenu.getChildren().addAll( settingsBtn,accBtn,homeBtn,CurseBtn,VanillaBtn);
+        sidemenu.getChildren().addAll( settingsBtn,accBtn,homeBtn,VanillaBtn);
 
 
     }
@@ -214,25 +194,20 @@ public class App extends Panel {
     public void onShow() {
         super.onShow();
         if(Objects.equals(saver.get("LauncherPage"), "home")) {
-            setPage(new RobossFactory(), homeBtn);
-        } else if (Objects.equals(saver.get("LauncherPage"), "modded")) {
-            setPage(new Instances(), CurseBtn);
-        }else if(Objects.equals(saver.get("LauncherPage"), "vanilla")) {
+            setPage(new Modded(), homeBtn);
+        } else if(Objects.equals(saver.get("LauncherPage"), "vanilla")) {
             setPage(new Vanilla(), VanillaBtn);
         }else{
-            setPage(new RobossFactory(), homeBtn);
+            setPage(new Modded(), homeBtn);
         }
     }
 
 
     public void setPage(ContentPanel panel, Node navButton) {
-        if (currentPage instanceof RobossFactory && ((RobossFactory) currentPage).isDownloading()) {
+        if (currentPage instanceof Modded && ((Modded) currentPage).isDownloading()) {
             return;
         }
         if (currentPage instanceof Vanilla && ((Vanilla) currentPage).isDownloading()) {
-            return;
-        }
-        if (currentPage instanceof Instances && ((Instances) currentPage).isDownloading()) {
             return;
         }
         if (activeLink != null)

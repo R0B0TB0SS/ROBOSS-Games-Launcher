@@ -23,7 +23,7 @@ public class PanelManager {
     private static GridPane layout;
     static Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();
     private final GridPane contentPane = new GridPane();
-    private  final ImageView loadingtext= new ImageView(new Image("images/loading.png"));
+    private  final ImageView loadingText = new ImageView(new Image("images/loading.png"));
     private  final ImageView icon= new ImageView(new Image("images/icon.png"));
     private  final ImageView logo= new ImageView(new Image("images/logo.png"));
 
@@ -33,11 +33,12 @@ public class PanelManager {
     }
     public void start() {
         RobossSystemTray.create();
-        loadingtext.setPreserveRatio(true);
-        loadingtext.setFitHeight(stage.getHeight()*0.05);
-        loadingtext.setTranslateY(stage.getHeight()*0.55);
-        GridPane.setHalignment(loadingtext , HPos.CENTER);
-        layout.getChildren().add(loadingtext);
+        loadingText.setPreserveRatio(true);
+        loadingText.setFitHeight(stage.getHeight()*0.05);
+        loadingText.setTranslateY(stage.getHeight()*0.55);
+        loadingText.setTranslateX(stage.getWidth()*0.01);
+        GridPane.setHalignment(loadingText, HPos.CENTER);
+        layout.getChildren().add(loadingText);
 
         icon.setPreserveRatio(true);
         icon.setFitHeight(stage.getHeight()*0.55);
@@ -49,6 +50,7 @@ public class PanelManager {
         logo.setFitWidth(stage.getHeight()*0.55);
         GridPane.setHalignment(logo , HPos.CENTER);
         logo.setTranslateY(stage.getHeight()*0.35);
+        logo.setTranslateX(stage.getWidth()*-0.008);
         layout.getChildren().add(logo);
     }
 
@@ -76,20 +78,20 @@ public class PanelManager {
             this.stage.initStyle(StageStyle.DECORATED);
             //TopBar topBar = new TopBar();
             BorderlessScene scene = new BorderlessScene(this.stage, StageStyle.DECORATED, layout);
-            scene.setResizable(true);
+            scene.setResizable(false);
             //scene.setMoveControl(topBar.getLayout());
             scene.removeDefaultCSS();
 
 
             this.stage.setScene(scene);
 
-            /*RowConstraints topPaneContraints = new RowConstraints();
-            topPaneContraints.setValignment(VPos.TOP);
-            topPaneContraints.setMinHeight(30);
-            topPaneContraints.setMaxHeight(30);
-            layout.getRowConstraints().addAll(topPaneContraints, new RowConstraints());
-            layout.add(topBar.getLayout(), 0, 0);
-            topBar.init(this);*/
+            //RowConstraints topPaneContraints = new RowConstraints();
+            //topPaneContraints.setValignment(VPos.TOP);
+            //topPaneContraints.setMinHeight(30);
+            //topPaneContraints.setMaxHeight(30);
+            //layout.getRowConstraints().addAll(topPaneContraints, new RowConstraints());
+            //layout.add(topBar.getLayout(), 0, 0);
+            //topBar.init(this);
 
 
 
@@ -114,7 +116,7 @@ public class PanelManager {
         }
         panel.init(this);
         panel.onShow();
-        layout.getChildren().remove(loadingtext);
+        layout.getChildren().remove(loadingText);
         layout.getChildren().remove(icon);
         layout.getChildren().remove(logo);
     }
