@@ -3,6 +3,7 @@ package be.R0B0TB0SS.launcher.ui.panels.pages;
 import be.R0B0TB0SS.launcher.Launcher;
 import be.R0B0TB0SS.launcher.ui.PanelManager;
 import be.R0B0TB0SS.launcher.ui.panel.Panel;
+import be.R0B0TB0SS.launcher.utils.account.MgAccount;
 import be.R0B0TB0SS.launcher.utils.authentification.MicrosoftAuthenticator;
 import be.R0B0TB0SS.launcher.utils.translate.Translate;
 import fr.theshark34.openlauncherlib.minecraft.AuthInfos;
@@ -44,7 +45,13 @@ public class Login extends Panel {
     @Override
     public void init(PanelManager panelManager) {
         super.init(panelManager);
-
+        saver.remove("username");
+        saver.remove("offline-username");
+        saver.remove("UUID");
+        saver.remove("msAccessToken");
+        saver.remove("msRefreshToken");
+        saver.remove("acc_type");
+        saver.save();
         // Background
         this.layout.getStyleClass().add("login-layout");
 
@@ -215,7 +222,9 @@ public class Login extends Panel {
                     UUID.randomUUID().toString()
             );
             saver.set("offline-username", infos.getUsername());
+            saver.set("acc_type","offline");
             saver.save();
+            MgAccount.addAccount(saver.get("offline-username"));
         Launcher.getInstance().setAuthInfos(infos);
 
             this.logger.info("Hello " + infos.getUsername());
@@ -243,7 +252,9 @@ public class Login extends Panel {
             saver.set("msRefreshToken", response.getRefreshToken());
             saver.set("username", response.getProfile().getName());
             saver.set("UUID", response.getProfile().getId());
+            saver.set("acc_type","online");
             saver.save();
+            MgAccount.addAccount(saver.get("username"),saver.get("UUID"),saver.get("msAccessToken"),saver.get("msRefreshToken"));
             Launcher.getInstance().setAuthInfos(new AuthInfos(
                     response.getProfile().getName(),
                     response.getAccessToken(),
