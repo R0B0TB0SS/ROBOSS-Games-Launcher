@@ -20,6 +20,7 @@ import java.awt.*;
 import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -216,34 +217,41 @@ public class Launcher extends Application {
 
     public static void restart() {
         try {
-            // 1. Préparer la commande de redémarrage
+            // 1. Obtenir le chemin du JAR en cours d'exécution
+            String jarPath = Main.class.getProtectionDomain()
+                    .getCodeSource()
+                    .getLocation()
+                    .toURI()
+                    .getPath();
+
+            // 2. Préparer la commande
             List<String> command = new ArrayList<>();
+            command.add(System.getProperty("java.home") + File.separator + "bin" + File.separator + "java");
 
-            // On récupère le chemin de l'exécutable java (java.exe)
-            command.add(System.getProperty("java.home") + "/bin/java");
+            // Ajouter les arguments de la JVM (mémoire, etc.)
+            command.addAll(ManagementFactory.getRuntimeMXBean().getInputArguments());
 
-            // On récupère les arguments passés à la JVM (mémoire, modules, etc.)
-            command.addAll(java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments());
+            // 3. Distinguer le mode IDE du mode JAR
+            if (jarPath.endsWith(".jar")) {
+                // Mode JAR : on utilise -jar
+                command.add("-jar");
+                command.add(new File(jarPath).getPath());
+            } else {
+                // Mode IDE : on utilise le classpath classique
+                command.add("-cp");
+                command.add(System.getProperty("java.class.path"));
+                command.add(System.getProperty("sun.java.command").split(" ")[0]);
+            }
 
-            // On récupère le "classpath" ou le "module-path"
-            command.add("-cp");
-            command.add(System.getProperty("java.class.path"));
+            // 4. Lancer le nouveau processus
+            ProcessBuilder builder = new ProcessBuilder(command);
+            builder.start();
 
-            // On récupère la classe principale (Main)
-            // Note : System.getProperty("sun.java.command") peut contenir des arguments,
-            // on ne prend que le premier mot qui est la classe de lancement.
-            String mainClass = System.getProperty("sun.java.command").split(" ")[0];
-            command.add(mainClass);
-
-            // 2. Lancer le nouveau processus sans bloquer le thread actuel
-            new ProcessBuilder(command).inheritIO().start();
-
-            // 3. Fermer l'instance actuelle proprement
+            // 5. Quitter proprement l'ancien
             Platform.exit();
             System.exit(0);
 
-        } catch (Exception e) {
-            System.err.println("Erreur lors du redémarrage : " + e.getMessage());
+        } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         }
     }
