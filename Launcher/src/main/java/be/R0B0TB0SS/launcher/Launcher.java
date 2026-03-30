@@ -112,10 +112,11 @@ public class Launcher extends Application {
             saver.set("language","en_us");
         }
 
-       Platform.runLater(() -> {if (this.isUserAlreadyLoggedIn()) {
+       Platform.runLater(() -> {
+           if (this.isUserAlreadyLoggedIn()) {
             this.logger.info("Hello " + this.authInfos.getUsername());
             panelManager.showPanel(new App());
-        } else {
+        } else{
             panelManager.showPanel(new Login());
         }});
     }
@@ -185,6 +186,8 @@ public class Launcher extends Application {
         } else if (this.saver.get("offline-username") != null) {
             this.authInfos = new AuthInfos(this.saver.get("offline-username"), UUID.randomUUID().toString(), UUID.randomUUID().toString());
             return true;
+        }else if(MgAccount.nextAccount() != null){
+            MgAccount.setAccount(MgAccount.nextAccount());
         }
         return false;
     }

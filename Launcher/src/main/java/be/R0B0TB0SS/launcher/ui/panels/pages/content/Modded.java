@@ -3,6 +3,7 @@ package be.R0B0TB0SS.launcher.ui.panels.pages.content;
 import be.R0B0TB0SS.launcher.Launcher;
 import be.R0B0TB0SS.launcher.ui.PanelManager;
 import be.R0B0TB0SS.launcher.utils.StepInfo;
+import be.R0B0TB0SS.launcher.utils.debug.LogWindow;
 import be.R0B0TB0SS.launcher.utils.deleter.DeleterUtils;
 import be.R0B0TB0SS.launcher.utils.desktop.Notification;
 import be.R0B0TB0SS.launcher.utils.translate.Translate;
@@ -36,8 +37,9 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Files;
 import java.text.DecimalFormat;
@@ -57,7 +59,7 @@ public class Modded extends ContentPanel {
     private static String PROJECT_ID = null;
     private static String FILE_ID = null;
     private static Boolean EXT_REQ = true;
-    private static String MODLOADER;
+    private static NoFramework.ModLoader MODLOADER;
     private static final Path instancedir = Path.of(Launcher.getInstance().getLauncherDir() + "/modded");
     private static String NAME = Translate.getTranslate("modded.name");
 
@@ -106,7 +108,7 @@ public class Modded extends ContentPanel {
         try {
             IsOnline();
             Launcher.downloadFile(DATA_URL, instancedir + "/modded.json");
-            JsonObject object = IOUtils.readJson(new URL(DATA_URL)).getAsJsonObject();
+            JsonObject object = IOUtils.readJson(new URI(DATA_URL).toURL()).getAsJsonObject();
             getModdedJsonData(object);
             this.showPlayButton();
 
@@ -153,7 +155,7 @@ public class Modded extends ContentPanel {
         playBtn.setTranslateY(10);
         playBtn.getStyleClass().add("play-btn");
         playBtn.setGraphic(playIcon);
-        playBtn.setOnMouseClicked(e -> this.play());
+        playBtn.setOnMouseClicked(_ -> this.play());
         this.boxPane.getChildren().add(playBtn);
         NameLabem();
     }
@@ -256,25 +258,32 @@ public class Modded extends ContentPanel {
             this.logger.info("Launching Minecraft");
             NoFramework noFramework = new NoFramework(instancedir, Launcher.getInstance().getAuthInfos(), GameFolder.FLOW_UPDATER);
             noFramework.getAdditionalVmArgs().add(this.getRamArgsFromSaver());
-            Process p = noFramework.launch(gameVersion, MODDED_VER, NoFramework.ModLoader.NEO_FORGE);
+            Process p = noFramework.launch(gameVersion, MODDED_VER, MODLOADER);
+
+            if(Objects.equals(saver.get("console"), "true")) {
+                Platform.runLater(() -> {
+                    LogWindow logWindow = new LogWindow();
+                    File lfile = new File(instancedir + "/logs/latest.log");
+                    logWindow.attachToLogFile(lfile);
+                });
+            }
 
             if (Objects.equals(saver.get("closeAfterLaunch"), "true")) {
                 System.exit(0);
             }else{
             Platform.runLater(() -> this.panelManager.getStage().hide());
-            Platform.runLater(() -> {
-                try {
-                    p.waitFor();
-                    Platform.runLater(() -> this.panelManager.getStage().show());
-                    this.logger.info("Here am I !");
-                    this.showPlayButton();
-                    this.isDownloading = false;
-                }
-                catch (InterruptedException e) {
-                    Launcher.getInstance().getLogger().printStackTrace(e);
-                    this.logger.err("Failed to show the launcher");
-                }
-            });}
+                    try {
+                        p.waitFor();
+                        Platform.runLater(() -> {
+                            this.panelManager.getStage().show();
+                            this.showPlayButton();
+                            this.isDownloading = false;
+                        });
+                    } catch (InterruptedException e) {
+                        logger.err(String.valueOf(e));
+                    }
+
+            }
         }
         catch (Exception e) {
             Launcher.getInstance().getLogger().printStackTrace(e);
@@ -316,7 +325,8 @@ public class Modded extends ContentPanel {
             MODDED_VER = String.valueOf(version.get("modded_ver")).split("\"")[1];
             PROJECT_ID = String.valueOf(version.get("project_id")).split("\"")[1];
             FILE_ID = String.valueOf(version.get("file_id")).split("\"")[1];
-            MODLOADER = String.valueOf(version.get("modloader")).split("\"")[1];
+            EXT_REQ = Boolean.valueOf(String.valueOf(version.get("ext_req")).split("\"")[1]);
+            MODLOADER = NoFramework.ModLoader.valueOf(String.valueOf(version.get("modloader")).split("\"")[1]);
             try { NAME = String.valueOf(version.get("name")).split("\"")[1]; } catch (Exception ignored) {}
         }
         if (moddedJson.has("whitelist")) {
