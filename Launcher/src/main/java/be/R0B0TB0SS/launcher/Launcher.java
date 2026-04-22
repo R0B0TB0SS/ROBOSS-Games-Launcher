@@ -38,7 +38,7 @@ import javafx.stage.Stage;
 
 public class Launcher extends Application {
 
-    public static String VERSION = "1.1.8";
+    public static String VERSION = "1.1.9";
     private static Launcher instance;
     private static ILogger logger = null;
     public static final Path launcherDir = GameDirGenerator.createGameDir("robossgames", true);
