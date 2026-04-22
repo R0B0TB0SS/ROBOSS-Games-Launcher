@@ -6,7 +6,6 @@ import be.R0B0TB0SS.launcher.utils.translate.Translate;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import fr.theshark34.openlauncherlib.util.Saver;
 
 import java.awt.*;
@@ -117,6 +116,23 @@ public class MgAccount {
         return accounts;
     }
 
+    public static void refrechAccountData(){
+        String username = getCurrentAccount();
+        try {
+            Path local = instancedir.resolve("account.json");
+            if (Files.exists(local)) {
+                if(hasAccount(username)){
+
+                }
+
+            }
+        } catch (Exception ex) {
+            Launcher.getInstance().getLogger().printStackTrace(ex);
+            Notification.sendSystemNotification(Translate.getTranslate("generic.unable_to_refrech_account_data"), TrayIcon.MessageType.ERROR);
+        }
+
+    }
+
     public static void setAccount(String username){
         saver.remove("username");
         saver.remove("offline-username");
@@ -203,7 +219,7 @@ public class MgAccount {
             Files.writeString(local, gson.toJson(root));
 
         } catch (IOException e) {
-            e.printStackTrace();
+            Launcher.getInstance().getLogger().err(e.getMessage());
         }
     }
 

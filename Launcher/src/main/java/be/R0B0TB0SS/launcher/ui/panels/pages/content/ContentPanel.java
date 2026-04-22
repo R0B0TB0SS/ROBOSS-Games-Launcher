@@ -15,7 +15,7 @@ public abstract class ContentPanel extends Panel {
         transition.play();
     }
 
-    public void refrech(ContentPanel panel){
+    public void refrech(ContentPanel panel) {
         App.navContent.getChildren().clear();
         if (panel != null) {
             App.navContent.getChildren().add(panel.getLayout());
@@ -24,4 +24,5 @@ public abstract class ContentPanel extends Panel {
             panel.onShow();
         }
     }
+
 }
