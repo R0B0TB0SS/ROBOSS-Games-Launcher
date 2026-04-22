@@ -3,6 +3,7 @@ package be.R0B0TB0SS.launcher.ui.panels.pages;
 import be.R0B0TB0SS.launcher.Launcher;
 import be.R0B0TB0SS.launcher.ui.PanelManager;
 import be.R0B0TB0SS.launcher.ui.panel.Panel;
+import be.R0B0TB0SS.launcher.utils.FilesDownloader;
 import be.R0B0TB0SS.launcher.utils.account.MgAccount;
 import be.R0B0TB0SS.launcher.utils.authentification.MicrosoftAuthenticator;
 import be.R0B0TB0SS.launcher.utils.translate.Translate;
@@ -265,9 +266,9 @@ public class Login extends Panel {
 
             try {
                 String avatarUrl = "https://mc-heads.net/head/" + Launcher.getInstance().getAuthInfos().getUuid() + ".png";
-                Launcher.downloadFile(avatarUrl, Launcher.launcherDir.resolve("player_head.png").toString());
+                FilesDownloader.downloadFile(avatarUrl, Launcher.launcherDir.resolve("player_head.png").toString());
                 String bodyUrl = "https://mc-heads.net/body/" + Launcher.getInstance().getAuthInfos().getUuid() + ".png";
-                Launcher.downloadFile(bodyUrl, Launcher.launcherDir.resolve("player_body.png").toString());
+                FilesDownloader.downloadFile(bodyUrl, Launcher.launcherDir.resolve("player_body.png").toString());
             }catch (Exception ed){
                 Launcher.getInstance().getLogger().info(ed.toString());
             }

@@ -18,17 +18,59 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 public class LogWindow {
 
-    private final TextFlow textFlow;
-    private final ScrollPane scrollPane;
+    private TextFlow textFlow = null;
+    private ScrollPane scrollPane = null;
     private final StringBuilder logs = new StringBuilder();
+    private Stage stage = null;
+    private final String title;
+    private final List<Thread> threads = Collections.synchronizedList(new ArrayList<>());
+    private final List<Closeable> readers = Collections.synchronizedList(new ArrayList<>());
+    private volatile boolean running = true;
 
-    public LogWindow() {
-        Stage stage = new Stage();
-        stage.setTitle("Minecraft Logs");
+        public LogWindow(String title) {
+        this.title = title;
+    }
+
+    public void show() {
+        Platform.runLater(() -> {
+            try {
+                // ensure showing the log window won't allow the JVM to exit when it becomes the
+                // only visible window (we handle re-enabling implicit exit elsewhere)
+                Platform.setImplicitExit(false);
+                if (stage == null) initUI();
+                stage.show();
+            } catch (Exception ignored) {}
+        });
+
+    }
+
+    private void initUI() {
+        // must be called on FX thread
+        if (stage != null) return;
+
+        stage = new Stage();
+        stage.setTitle(this.title);
+
+        // When the user clicks the window close button, do not exit the whole application.
+        // Instead consume the close request, stop log readers/threads and hide the window.
+        stage.setOnCloseRequest(event -> {
+            try {
+                event.consume();
+                // ensure implicit exit is disabled so hiding this window won't exit the app
+                Platform.setImplicitExit(false);
+                // stop background readers/threads and close their streams
+                cleanupResources();
+                // only hide the stage to avoid implicit JVM exit when this is the last window
+                stage.hide();
+            } catch (Exception ignored) {}
+        });
 
         try {
             stage.getIcons().add(new javafx.scene.image.Image(
@@ -54,42 +96,107 @@ public class LogWindow {
         root.setCenter(scrollPane);
 
         stage.setScene(new Scene(root, 900, 550));
-        stage.show();
-    }
 
+        // flush stored logs into UI
+        synchronized (logs) {
+            if (!logs.isEmpty()) {
+                String[] lines = logs.toString().split("\n");
+                for (String l : lines) {
+                    if (l == null || l.isEmpty()) continue;
+                    Text t = new Text(l + "\n");
+                    t.setStyle("-fx-font-family: Consolas; -fx-font-size: 12;");
+                    if (l.contains("ERROR") || l.contains("Exception")) {
+                        t.setFill(Color.RED);
+                    } else if (l.contains("WARN")) {
+                        t.setFill(Color.ORANGE);
+                    } else if (l.contains("INFO")) {
+                        t.setFill(Color.LIMEGREEN);
+                    } else {
+                        t.setFill(Color.WHITE);
+                    }
+                    textFlow.getChildren().add(t);
+                }
+                scrollPane.setVvalue(1.0);
+            }
+        }
+    }
     // 🎨 Ajout de log avec couleurs
     public void log(String line) {
-        logs.append(line).append("\n");
+        synchronized (logs) {
+            logs.append(line).append("\n");
+        }
 
-        Platform.runLater(() -> {
-            Text text = new Text(line + "\n");
-            text.setStyle("-fx-font-family: Consolas; -fx-font-size: 12;");
+        // If UI is initialized, post to FX thread to display
+        if (textFlow != null && scrollPane != null) {
+            Platform.runLater(() -> {
+                try {
+                    Text text = new Text(line + "\n");
+                    text.setStyle("-fx-font-family: Consolas; -fx-font-size: 12;");
 
-            if (line.contains("ERROR") || line.contains("Exception")) {
-                text.setFill(Color.RED);
-            } else if (line.contains("WARN")) {
-                text.setFill(Color.ORANGE);
-            } else if (line.contains("INFO")) {
-                text.setFill(Color.LIMEGREEN);
-            } else {
-                text.setFill(Color.WHITE);
-            }
+                    if (line.contains("ERROR") || line.contains("Exception")) {
+                        text.setFill(Color.RED);
+                    } else if (line.contains("WARN")) {
+                        text.setFill(Color.ORANGE);
+                    } else if (line.contains("INFO")) {
+                        text.setFill(Color.LIMEGREEN);
+                    } else {
+                        text.setFill(Color.WHITE);
+                    }
 
-            textFlow.getChildren().add(text);
-
-            // auto scroll
-            scrollPane.setVvalue(1.0);
-        });
+                    textFlow.getChildren().add(text);
+                    scrollPane.setVvalue(1.0);
+                } catch (Exception ignored) {}
+            });
+        }
     }
 
-    // 🔗 Attacher au process Minecraft
     public void attachToProcess(Process process) {
-        new Thread(() -> read(process.getInputStream())).start();
-        new Thread(() -> read(process.getErrorStream())).start();
+        try {
+            BufferedReader inReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader errReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+
+            readers.add(inReader);
+            readers.add(errReader);
+
+            Thread t1 = new Thread(() -> read(inReader));
+            t1.setDaemon(true);
+            threads.add(t1);
+            t1.start();
+
+            Thread t2 = new Thread(() -> read(errReader));
+            t2.setDaemon(true);
+            threads.add(t2);
+            t2.start();
+        } catch (Exception e) {
+            log("[ERROR] attachToProcess: " + e.getMessage());
+        }
     }
 
     public void close(){
+        // cleanup resources and close the UI
+        cleanupResources();
+        Platform.runLater(() -> {
+            try { stage.close(); } catch (Exception ignored) {}
+        });
+    }
 
+    /**
+     * Stop readers/threads but do not call Stage.close() so the application doesn't exit
+     * when the user closes the log window via titlebar close button.
+     */
+    private void cleanupResources() {
+        // mark stop
+        running = false;
+
+        // close registered readers (will unblock readLine)
+        for (Closeable r : readers) {
+            try { r.close(); } catch (IOException ignored) {}
+        }
+
+        // interrupt threads
+        for (Thread t : threads) {
+            try { t.interrupt(); } catch (Exception ignored) {}
+        }
     }
 
     public void attachToLogFile(File logFile) {
@@ -97,22 +204,21 @@ public class LogWindow {
             try {
                 long lastSize = 0;
 
-                while (true) {
+                while (running) {
                     if (logFile.exists()) {
-                        RandomAccessFile file = new RandomAccessFile(logFile, "r");
+                        try (RandomAccessFile file = new RandomAccessFile(logFile, "r")) {
+                            file.seek(lastSize);
 
-                        file.seek(lastSize);
+                            String line;
+                            while ((line = file.readLine()) != null) {
+                                log(new String(line.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
+                            }
 
-                        String line;
-                        while ((line = file.readLine()) != null) {
-                            log(new String(line.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
+                            lastSize = file.length();
                         }
-
-                        lastSize = file.length();
-                        file.close();
                     }
 
-                    //Thread.sleep(500);
+                    try { Thread.sleep(500); } catch (InterruptedException ie) { break; }
                 }
             } catch (Exception e) {
                 log("[ERROR] Log reader: " + e.getMessage());
@@ -120,14 +226,17 @@ public class LogWindow {
         }).start();
     }
 
-    private void read(InputStream stream) {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                log(line);
+    private void read(BufferedReader reader) {
+        try (reader) {
+            try {
+                String line;
+                while (running && (line = reader.readLine()) != null) {
+                    log(line);
+                }
+            } catch (Exception e) {
+                if (running) log("[ERROR] " + e.getMessage());
             }
-        } catch (Exception e) {
-            log("[ERROR] " + e.getMessage());
+        } catch (IOException ignored) {
         }
     }
 

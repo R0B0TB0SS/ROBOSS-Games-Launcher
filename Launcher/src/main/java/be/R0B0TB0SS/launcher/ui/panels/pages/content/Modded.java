@@ -2,6 +2,7 @@ package be.R0B0TB0SS.launcher.ui.panels.pages.content;
 
 import be.R0B0TB0SS.launcher.Launcher;
 import be.R0B0TB0SS.launcher.ui.PanelManager;
+import be.R0B0TB0SS.launcher.utils.FilesDownloader;
 import be.R0B0TB0SS.launcher.utils.StepInfo;
 import be.R0B0TB0SS.launcher.utils.debug.LogWindow;
 import be.R0B0TB0SS.launcher.utils.deleter.DeleterUtils;
@@ -59,6 +60,7 @@ public class Modded extends ContentPanel {
     private static String PROJECT_ID = null;
     private static String FILE_ID = null;
     private static Boolean EXT_REQ = true;
+    private static Boolean MAINTENANCE_MOD;
     private static NoFramework.ModLoader MODLOADER;
     private static final Path instancedir = Path.of(Launcher.getInstance().getLauncherDir() + "/modded");
     private static String NAME = Translate.getTranslate("modded.name");
@@ -104,14 +106,16 @@ public class Modded extends ContentPanel {
         this.fileLabel.setTranslateY(20.0);
         this.setCenterH(this.fileLabel);
         this.setCanTakeAllSize(this.fileLabel);
-        NameLabem();
         try {
             IsOnline();
-            Launcher.downloadFile(DATA_URL, instancedir + "/modded.json");
+            FilesDownloader.downloadFile(DATA_URL, instancedir + "/modded.json");
             JsonObject object = IOUtils.readJson(new URI(DATA_URL).toURL()).getAsJsonObject();
             getModdedJsonData(object);
-            this.showPlayButton();
-
+            if (!MAINTENANCE_MOD) {
+                Platform.runLater(this::showPlayButton);
+            }else{
+                NameLabem(Translate.getTranslate("modded.maintenance"));
+            }
         } catch (Exception ee) {
             logger.err("No internet.... Trying to read local modded.json");
             try {
@@ -120,7 +124,11 @@ public class Modded extends ContentPanel {
                     String jsonStr = Files.readString(local);
                     com.google.gson.JsonObject object = com.google.gson.JsonParser.parseString(jsonStr).getAsJsonObject();
                     getModdedJsonData(object);
-                    this.showPlayButton();
+                    if (!MAINTENANCE_MOD) {
+                        Platform.runLater(this::showPlayButton);
+                    }else{
+                        NameLabem(Translate.getTranslate("modded.maintenance"));
+                    }
                 } else {
                     logger.err("Local modded.json not found: " + local.toAbsolutePath());
                     Notification.sendSystemNotification(Translate.getTranslate("generic.unable_to_load"), TrayIcon.MessageType.ERROR);
@@ -142,6 +150,16 @@ public class Modded extends ContentPanel {
         this.boxPane.getChildren().add(name);
     }
 
+    private void NameLabem(String text){
+        Label name = new Label(text);
+        name.setFont(Font.font("Consolas", FontWeight.BOLD, FontPosture.REGULAR, 18f));
+        name.setStyle("-fx-text-fill: white;");
+        setLeft(name);
+        name.setTranslateX(20);
+        name.setTranslateY(5);
+        this.boxPane.getChildren().add(name);
+    }
+
 
 
     private void showPlayButton() {
@@ -155,7 +173,7 @@ public class Modded extends ContentPanel {
         playBtn.setTranslateY(10);
         playBtn.getStyleClass().add("play-btn");
         playBtn.setGraphic(playIcon);
-        playBtn.setOnMouseClicked(_ -> this.play());
+        playBtn.setOnMouseClicked(e -> this.play());
         this.boxPane.getChildren().add(playBtn);
         NameLabem();
     }
@@ -254,35 +272,51 @@ public class Modded extends ContentPanel {
 
 
     public void startGame(String gameVersion) {
+        LogWindow logWindow = new LogWindow("Minecraft Logs");
+        logWindow.attachToLogFile(new File(instancedir + "/logs/latest.log"));
         try {
             this.logger.info("Launching Minecraft");
             NoFramework noFramework = new NoFramework(instancedir, Launcher.getInstance().getAuthInfos(), GameFolder.FLOW_UPDATER);
             noFramework.getAdditionalVmArgs().add(this.getRamArgsFromSaver());
             Process p = noFramework.launch(gameVersion, MODDED_VER, MODLOADER);
 
-            if(Objects.equals(saver.get("console"), "true")) {
-                Platform.runLater(() -> {
-                    LogWindow logWindow = new LogWindow();
-                    File lfile = new File(instancedir + "/logs/latest.log");
-                    logWindow.attachToLogFile(lfile);
-                });
+            if(Objects.equals(saver.get("logwindow"), "true")){
+                logWindow.show();
             }
 
             if (Objects.equals(saver.get("closeAfterLaunch"), "true")) {
                 System.exit(0);
-            }else{
-            Platform.runLater(() -> this.panelManager.getStage().hide());
+            } else {
+                // Prevent the JVM from exiting if the log window is the last visible window
+                // and hide the launcher UI. Do both on the FX thread to ensure correctness.
+                Platform.runLater(() -> {
+                    Platform.setImplicitExit(false);
+                    this.panelManager.getStage().hide();
+                });
+
+                // Wait for the game process off the FX thread to avoid freezing the UI
+                Thread waiter = new Thread(() -> {
                     try {
                         p.waitFor();
-                        Platform.runLater(() -> {
-                            this.panelManager.getStage().show();
-                            this.showPlayButton();
-                            this.isDownloading = false;
-                        });
                     } catch (InterruptedException e) {
-                        logger.err(String.valueOf(e));
+                        Thread.currentThread().interrupt();
                     }
 
+                    // Restore UI on FX thread and re-enable implicit JVM exit
+                    Platform.runLater(() -> {
+                        // Allow the application to exit normally when windows are closed
+                        Platform.setImplicitExit(true);
+                        this.panelManager.getStage().show();
+                        this.logger.info("Here am I !");
+                        this.showPlayButton();
+                        this.isDownloading = false;
+                    });
+
+                    // Close the log window (its UI-close is also dispatched to FX thread inside close())
+                    logWindow.close();
+                });
+                waiter.setDaemon(true);
+                waiter.start();
             }
         }
         catch (Exception e) {
@@ -325,7 +359,7 @@ public class Modded extends ContentPanel {
             MODDED_VER = String.valueOf(version.get("modded_ver")).split("\"")[1];
             PROJECT_ID = String.valueOf(version.get("project_id")).split("\"")[1];
             FILE_ID = String.valueOf(version.get("file_id")).split("\"")[1];
-            EXT_REQ = Boolean.valueOf(String.valueOf(version.get("ext_req")).split("\"")[1]);
+            EXT_REQ = Boolean.valueOf(String.valueOf(version.get("ext_req")));
             MODLOADER = NoFramework.ModLoader.valueOf(String.valueOf(version.get("modloader")).split("\"")[1]);
             try { NAME = String.valueOf(version.get("name")).split("\"")[1]; } catch (Exception ignored) {}
         }
@@ -334,6 +368,13 @@ public class Modded extends ContentPanel {
         }
         if (moddedJson.has("blacklist")) {
             moddedJson.getAsJsonArray("blacklist").forEach(element -> BLACKLIST_FILES.add(element.getAsString()));
-        }    }
+        }
+        if(moddedJson.has("maintenance")) {
+            MAINTENANCE_MOD = Boolean.valueOf(String.valueOf(moddedJson.get("maintenance")));
+        }
+
+        System.out.println(Boolean.valueOf(String.valueOf(moddedJson.get("maintenance"))));
+        System.out.println(moddedJson.get("maintenance"));
+    }
 
 }

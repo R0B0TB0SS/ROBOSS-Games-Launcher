@@ -55,5 +55,6 @@
   "mnginstance.save.general.nameUsed": "This instance's name is already use please enter another",
   "mnginstance.curseforge.checkbox": "CurseForge Modpack",
   "mnginstance.textfield.modloaderversion": "Moadloader's version",
-  "mnginstance.version.select": "Select version"
+  "mnginstance.version.select": "Select version",
+  "modded.maintenance": "Maintenance in progress, Please try later"
 }

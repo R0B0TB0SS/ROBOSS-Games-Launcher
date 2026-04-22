@@ -4,6 +4,8 @@ import java.awt.*;
 import java.io.IOException;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+
+import be.R0B0TB0SS.launcher.utils.audio.Audio;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -31,6 +33,7 @@ import org.slf4j.LoggerFactory;
 public class Notification {
     private static final Logger logger = LoggerFactory.getLogger(Notification.class);
     public static void sendSystemNotification(String message, TrayIcon.MessageType type) {
+        Audio.playAudio("/audio/notif.mp3");
         String title = "ROBOSS Games Launcher";
         sendSystemNotification(title, message, type);
     }

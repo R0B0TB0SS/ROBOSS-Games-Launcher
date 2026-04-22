@@ -148,9 +148,9 @@ public class Settings extends ContentPanel {
         priorityComboBox.setTranslateY(250d);
         try {
             if(Objects.equals(saver.get("closeAfterLaunch"), "true")){
-                priorityComboBox.setValue(Translate.getTranslate("setting.pref.close"));
+                priorityComboBox.setValue(Translate.getTranslate("setting.pref.close")+" ");
             }else{
-                priorityComboBox.setValue(Translate.getTranslate("setting.pref.hide"));
+                priorityComboBox.setValue(Translate.getTranslate("setting.pref.hide")+" ");
             }
 
 
@@ -183,13 +183,13 @@ public class Settings extends ContentPanel {
         langcombobox.setTranslateX(35d);
         langcombobox.setTranslateY(325d);
         if(Translate.isLanguageExist(saver.get("language"))){
-            langcombobox.setValue(Translate.getLanguage());
+            langcombobox.setValue(Translate.getLanguage()+" ");
         }else{
-            langcombobox.setValue("English");
+            langcombobox.setValue("English ");
 
         }
         langcombobox.setOnHidden(e -> {
-            saver.set("language", Translate.getFileName(langcombobox.getValue()));
+            saver.set("language", Translate.getFileName(langcombobox.getValue().split(" ")[0]));
             logger.info("Language is now: "+Translate.getFileName(langcombobox.getValue()));
             refrech(new Settings());
         });
@@ -216,7 +216,7 @@ public class Settings extends ContentPanel {
         setTop(btnof);
         setLeft(btnof);
         btnof.setTranslateX(25d);
-        btnof.setTranslateY(375d);
+        btnof.setTranslateY(400d);
         btnof.setOnMouseClicked(e -> {
             try {
                 Desktop.getDesktop().open(new File(OsCheck.getAppData() + "\\.robossgames"));
@@ -246,7 +246,7 @@ public class Settings extends ContentPanel {
             this.logger.info("Now RAM is "+_val__+"Go");
 
             String pref = priorityComboBox.getValue();
-            if(Objects.equals(priorityComboBox.getValue(), Translate.getTranslate("setting.pref.hide"))){
+            if(Objects.equals(priorityComboBox.getValue(), Translate.getTranslate("setting.pref.hide").split(" ")[0])){
             saver.set("closeAfterLaunch", "false");}else{
                 saver.set("closeAfterLaunch", "true");
             }

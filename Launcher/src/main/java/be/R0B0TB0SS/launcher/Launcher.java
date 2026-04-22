@@ -1,5 +1,6 @@
 package be.R0B0TB0SS.launcher;
 
+import be.R0B0TB0SS.launcher.utils.FilesDownloader;
 import be.R0B0TB0SS.launcher.utils.account.MgAccount;
 import be.R0B0TB0SS.launcher.utils.authentification.MicrosoftAuthResult;
 import be.R0B0TB0SS.launcher.utils.authentification.MicrosoftAuthenticationException;
@@ -37,51 +38,23 @@ import javafx.stage.Stage;
 
 public class Launcher extends Application {
 
-    public static String VERSION = "1.1.6";
+    public static String VERSION = "1.1.8";
     private static Launcher instance;
     private static ILogger logger = null;
     public static final Path launcherDir = GameDirGenerator.createGameDir("robossgames", true);
     private final Saver saver;
     private AuthInfos authInfos = null;
 
-    public static void downloadFile(String imageUrl, String destinationFile) {
-        try {
-            URL url = new URL(imageUrl);
-            HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
-            httpConn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3");
-
-            int responseCode = httpConn.getResponseCode();
-
-            // Check for 200 OK response
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                try (BufferedInputStream bis = new BufferedInputStream(httpConn.getInputStream());
-                     FileOutputStream fos = new FileOutputStream(destinationFile)) {
-
-                    byte[] buffer = new byte[1024];
-                    int count;
-                    while ((count = bis.read(buffer, 0, 1024)) != -1) {
-                        fos.write(buffer, 0, count);
-                    }
-                }
-            } else {
-                // Handle HTTP error codes
-                Launcher.getInstance().getLogger().err("HTTP Error: " + responseCode + " - " + httpConn.getResponseMessage());
-            }
-            httpConn.disconnect();
-        } catch (IOException e) {
-            Launcher.getInstance().getLogger().err(e.toString());
-        }
-    }
     public Launcher() {
         instance = this;
-        this.logger = new Logger("[ROBOSS Games Launcher]", launcherDir.resolve("launcher.log"));
+        logger = new Logger("[ROBOSS Games Launcher]", launcherDir.resolve("launcher.log"));
         if (Files.notExists(launcherDir)) {
             try {
                 Files.createDirectory(launcherDir);
             }
             catch (IOException e) {
-                this.logger.err("Unable to create launcher folder");
-                this.logger.printStackTrace(e);
+                logger.err("Unable to create launcher folder");
+                logger.printStackTrace(e);
             }
         }
         this.saver = new Saver(launcherDir.resolve("config.properties"));
@@ -96,9 +69,9 @@ public class Launcher extends Application {
     @Override
     public void start(Stage stage) {
         Debugger.debugData();
-        this.logger.info("Starting");
-        this.logger.info("Version: V"+VERSION);
-       Translate.languageList();
+        logger.info("Starting");
+        logger.info("Version: V"+VERSION);
+        Translate.languageList();
         MgAccount.createAccountFile();
         if(!MgAccount.hasAccount(saver.get("username")) && saver.get("username") != null) {
             MgAccount.addAccount(saver.get("username"),saver.get("UUID"),saver.get("msAccessToken"),saver.get("msRefreshToken"));
@@ -114,7 +87,7 @@ public class Launcher extends Application {
 
        Platform.runLater(() -> {
            if (this.isUserAlreadyLoggedIn()) {
-            this.logger.info("Hello " + this.authInfos.getUsername());
+            logger.info("Hello " + this.authInfos.getUsername());
             panelManager.showPanel(new App());
         } else{
             panelManager.showPanel(new Login());
@@ -147,11 +120,14 @@ public class Launcher extends Application {
                             response.getAccessToken(),
                             response.getProfile().getId()
                     ));
-                    String avatarUrl = "https://mc-heads.net/head/" + Launcher.getInstance().getAuthInfos().getUuid() + ".png/64";
-                    downloadFile(avatarUrl, launcherDir.resolve("player_head.png").toString());
-                    String bodyUrl = "https://mc-heads.net/body/" + Launcher.getInstance().getAuthInfos().getUuid() + ".png/96";
-                    downloadFile(bodyUrl, launcherDir.resolve("player_body.png").toString());
-
+                    try {
+                        String avatarUrl = "https://mc-heads.net/head/" + Launcher.getInstance().getAuthInfos().getUuid() + ".png/64";
+                        FilesDownloader.downloadFile(avatarUrl, launcherDir.resolve("player_head.png").toString());
+                        String bodyUrl = "https://mc-heads.net/body/" + Launcher.getInstance().getAuthInfos().getUuid() + ".png/96";
+                        FilesDownloader.downloadFile(bodyUrl, launcherDir.resolve("player_body.png").toString());
+                    } catch (Exception e) {
+                        Launcher.getInstance().getLogger().err("Failed to download skin images: " + e.getMessage());
+                    }
                     return true;
 
             }
@@ -220,42 +196,34 @@ public class Launcher extends Application {
 
     public static void restart() {
         try {
-            // 1. Obtenir le chemin du JAR en cours d'exécution
             String jarPath = Main.class.getProtectionDomain()
                     .getCodeSource()
                     .getLocation()
                     .toURI()
                     .getPath();
 
-            // 2. Préparer la commande
             List<String> command = new ArrayList<>();
             command.add(System.getProperty("java.home") + File.separator + "bin" + File.separator + "java");
 
-            // Ajouter les arguments de la JVM (mémoire, etc.)
             command.addAll(ManagementFactory.getRuntimeMXBean().getInputArguments());
 
-            // 3. Distinguer le mode IDE du mode JAR
             if (jarPath.endsWith(".jar")) {
-                // Mode JAR : on utilise -jar
                 command.add("-jar");
                 command.add(new File(jarPath).getPath());
             } else {
-                // Mode IDE : on utilise le classpath classique
                 command.add("-cp");
                 command.add(System.getProperty("java.class.path"));
                 command.add(System.getProperty("sun.java.command").split(" ")[0]);
             }
 
-            // 4. Lancer le nouveau processus
             ProcessBuilder builder = new ProcessBuilder(command);
             builder.start();
 
-            // 5. Quitter proprement l'ancien
             Platform.exit();
             System.exit(0);
 
         } catch (URISyntaxException | IOException e) {
-            e.printStackTrace();
+            logger.err(e.getMessage());
         }
     }
 }
